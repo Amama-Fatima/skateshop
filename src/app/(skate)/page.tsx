@@ -1,37 +1,24 @@
-import Link from "next/link";
+import { Button } from "~/components/ui/button";
 
-export default function HomePage() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+
+//  <div className="flex max-w-[980px] flex-col items-start gap-2">
+//<p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
+export default function IndexPage(){
+  return(
+    <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
+      <div className="flex max-w-[980px] flex-col items-start gap-2">
+        <h1 className="text-3xl font-bold leading-tight tracking-tighter sm:text-3xl md:text-5xl lg:text-6xl">
+          Beautiful designed components <br className="hidden sm:inline"/>
+          built with Radix UI and Tailwind CSS
         </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-            <div className="text-lg">
-              Just the basics - Everything you need to know to set up your
-              database and authentication.
-            </div>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <div className="text-lg">
-              Learn more about Create T3 App, the libraries it uses, and how to
-              deploy it.
-            </div>
-          </Link>
-        </div>
+        <p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
+          Accessible and customizable components that you can copy and paste
+          into your apps. Free. Open Source. And Next.js 13 Ready.
+        </p>
       </div>
-    </main>
-  );
+      <form>
+        <Button>Submit</Button>
+      </form>
+    </section>
+  )
 }
