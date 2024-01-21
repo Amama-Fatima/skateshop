@@ -7,13 +7,14 @@ export const siteConfig = {
     url: "https://skateshop.vercel.app",
     ogImage: "https://skateshop.vercel.app/opengraph-image.png",
 
-    mainNav: [
+    mainNav: [],
+    secondaryNav: [
+
         {
             title: "SkateBoards",
             href: "/skateboards",
         },
-    ],
-    secondaryNav: [
+    
         {
             title: "Clothing",
             href: "/clothing",
@@ -31,6 +32,7 @@ export const siteConfig = {
     links: {
         twitter: "https://twitter.com/vercel",
         github: "https://github.com/Amama-Fatima",
+        linkedin: "https://www.linkedin.com/in/amama-fatima-2b1b1a1b1/",
     }
     
 }

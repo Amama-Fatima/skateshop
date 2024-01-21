@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,12 +6,10 @@ generator client {
 
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-   // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+  // directUrl = env("DIRECT_URL")
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 
@@ -33,12 +28,12 @@ model Account {
     type              String
     provider          String 
     providerAccountId String
-    refresh_token     String? // @db.Text refresh token is a special kind of token that is used to obtain a renewed access token. When an access token expires, the client can use the refresh token to get a new access token without requiring the user to go through the authentication flow again. This is particularly useful for maintainig a session or connection without interrupting the user experience.
-    access_token      String? // @db.Text access_tokens grant temp access to an API or resource. Its used by the client to make authenticated requests on behalf of the user. Access tokens are short lived anf usually expire after a certain period defined by expired_at
+    refresh_token     String? @db.Text //  refresh token is a special kind of token that is used to obtain a renewed access token. When an access token expires, the client can use the refresh token to get a new access token without requiring the user to go through the authentication flow again. This is particularly useful for maintainig a session or connection without interrupting the user experience.
+    access_token      String? @db.Text // @db.Text access_tokens grant temp access to an API or resource. Its used by the client to make authenticated requests on behalf of the user. Access tokens are short lived anf usually expire after a certain period defined by expired_at
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text  id token is a json web token that has claims about the authentication of of an end user by an authorization server when using a client and potentially other requested claims. The id token is used to authenticate the user and can provide 
+    id_token          String? @db.Text // @db.Text  id token is a json web token that has claims about the authentication of of an end user by an authorization server when using a client and potentially other requested claims. The id token is used to authenticate the user and can provide 
     session_state     String?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   
@@ -52,7 +47,7 @@ model Account {
 // provider: This field represents the third-party authentication provider, such as Google, Facebook, or Twitter.
 // providerAccountId: This field represents the unique identifier assigned to the user by the third-party authentication provider.
 // The combination of provider and providerAccountId uniquely identifies an account for a user on a specific third-party authentication provider. For example, a user may have a Google account with a providerAccountId of "12345" and a Facebook account with a providerAccountId of "67890". The @@unique([provider, providerAccountId]) constraint ensures that these accounts are treated as distinct and that no duplicate accounts are created for the same user on the same provider.
-
+// refresh_token: This field represents the refresh token that is used to obtain a renewed access token. When an access token expires, the client can use the refresh token to get a new access token without requiring the user to go through the authentication flow again. This is particularly useful for maintaining a session or connection without interrupting the user experience.
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique

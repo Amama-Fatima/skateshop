@@ -11,7 +11,7 @@ const SiteFooter = () => {
     <footer className='w-full bg-background'>
       <div className='container flex flex-col items-center justify-between space-y-1 border-t sm:h-16 sm:flex-row sm:py-0'>
         <div className="text-center text-sm text-muted-foreground sm:text-base">
-          Do a{" "} 
+          Learn to Do a{" "} 
           <a href="https://www.youtube.com/watch?v=kpVhjV-I6nM"
           aria-label="Kickflip tutorial on YouTube"
           target="_blank"

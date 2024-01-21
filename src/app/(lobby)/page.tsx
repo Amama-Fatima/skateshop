@@ -1,4 +1,4 @@
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/ui/button"
 
 
 //  <div className="flex max-w-[980px] flex-col items-start gap-2">
@@ -22,3 +22,5 @@ export default function IndexPage(){
     </section>
   )
 }
+
+

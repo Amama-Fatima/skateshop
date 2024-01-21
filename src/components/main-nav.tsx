@@ -3,7 +3,11 @@ import { Icons } from './icons';
 import Link from 'next/link';
 import { siteConfig } from '~/config/site';
 import type { NavItem } from '~/types';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { DropdownMenu, DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger, } from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { cn } from '~/lib/utils';
 

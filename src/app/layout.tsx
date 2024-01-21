@@ -1,11 +1,11 @@
-import "~/styles/globals.css";
-import type { Metadata } from "next";
-import { siteConfig } from "~/config/site";
-import { cn } from "~/lib/utils";
-import { fontSans } from "~/lib/fonts";
-import { ThemeProvider } from "~/components/theme-provider";
-import { Toaster } from "~/components/ui/toaster";
-import { TailwindIndicator } from "~/components/tailwind-indicator";
+import "~/styles/globals.css"
+import type { Metadata } from "next"
+import { siteConfig } from "~/config/site"
+import { cn } from "~/lib/utils"
+import { fontSans } from "~/lib/fonts"
+import { ThemeProvider } from "~/components/theme-provider"
+import { Toaster } from "~/components/ui/toaster"
+import { TailwindIndicator } from "~/components/tailwind-indicator"
 
 
 export const metadata: Metadata = {
@@ -73,6 +73,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                         <Toaster/>
                         <TailwindIndicator/>
                     </ThemeProvider>
+                    
                 </body>
             </html>
         </>
