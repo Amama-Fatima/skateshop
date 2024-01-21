@@ -4,6 +4,7 @@ import { siteConfig } from '~/config/site';
 import { Icons } from './icons';
 import { buttonVariants } from './ui/button';
 import { cn } from '~/lib/utils';
+import { ThemeToggle } from './theme-toggle';
 
 
 const SiteFooter = () => {
@@ -29,6 +30,7 @@ const SiteFooter = () => {
               <span className='sr-only'>GitHub</span>
             </div>
           </Link>
+          <ThemeToggle/>
         </div>
       </div>
     </footer>

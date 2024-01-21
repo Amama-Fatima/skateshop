@@ -1,16 +1,16 @@
 'use client'
 
 import React from "react";
-import MainNav from "~/components/main-nav";
+import MainNav from "~/components/main-nav";//
 import { ThemeToggle } from "~/components/theme-toggle";
-import { siteConfig } from "~/config/site";
+import { siteConfig } from "~/config/site";//
 import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuContent } from '~/components/ui/dropdown-menu'
-import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
-import { Button } from "~/components/ui/button";
-import Link from "next/link";
-import { Icons } from "~/components/icons";
-import { SessionUser } from "~/types";
-import { signIn, signOut } from "next-auth/react";
+import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";//
+import { Button } from "~/components/ui/button";//
+import Link from "next/link";//
+import { Icons } from "~/components/icons"; //
+import { SessionUser } from "~/types";//
+import { signIn, signOut } from "next-auth/react";//
 import { useRouter } from 'next/navigation'
 
 
@@ -23,10 +23,17 @@ export default function Header ({user}: SiteHeaderProps): JSX.Element {
     return (
       <header className='sticky top-0 z-40 w-full border-b bg-background'>
         <div className='container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0'>
-          <MainNav items={siteConfig.secondaryNav} />
+          <MainNav items={siteConfig.MainNav} />
           <div>
             <nav className='flex flex-1 items-center space-x-1'>
-              <ThemeToggle/>
+              <Button
+              variant="ghost"
+              size="sm"
+              aria-label = "cart"
+              className="w-9 px-0"
+              >
+                <Icons.cart className="h-6 w-6"/>
+              </Button>
               {user.name && user.image && user.email ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -51,8 +58,8 @@ export default function Header ({user}: SiteHeaderProps): JSX.Element {
                     </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href='/chats'>
-                      <Icons.message className="mr-2 h-4 w-4" /> Chats
+                    <Link href='/stores'>
+                      <Icons.store className="mr-2 h-4 w-4" /> Stores
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -65,9 +72,7 @@ export default function Header ({user}: SiteHeaderProps): JSX.Element {
                   onSelect={(e)=>{
                     e.preventDefault();
                     //void keyword explicitly ignores any return values
-                    void signOut({
-                      callbackUrl: `${window.location.origin}/login` //redirect to baseurl/login
-                    }) //takes in object with a property callbackUrl. 
+                    void signOut() 
                   }}
                   >
                     <Link href='/logout'>
