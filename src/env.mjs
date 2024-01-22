@@ -27,6 +27,7 @@ export const env = createEnv({
       (str)=> process.env.VERCEL_URL ?? str,
       process.env.VERCEL ? z.string().min(1) : z.string().url()
     ),
+
     
     //z.preprocess is a function which transforms data before it is validated. It akes 2 args. A transform function that takes ithe input data and returns the transformed data. 
     // the 2nd arg is the schema to which the transformed data will be validated against.
@@ -34,8 +35,9 @@ export const env = createEnv({
     // what it says is this: the 1st arg takes in a str which would be the value of NEXTAUTH_URL if VERCEL_URL is not set. If vercel_URL is set, the NEXTAUTH_URL is that.
     // then after transforming the data, the validation is done like this: VERCEL is a boolean flag indicating whether the app is deployed on vercel or not. If it is, then only make sure that the URL is a string of min length 1. If VERCEL is not true, then the URL must be the str passed which should actually be a valid url . We did not validate the VERCEL_URL as a url since vercel's env variables donot include protocol https, so validating it as a url will generate an error.
 
-    // GOOGLE_CLIENT_ID: z.string(),
-    // GOOGLE_CLIENT_SECRET: z.string(),
+    GOOGLE_CLIENT_ID: z.string(),
+    GOOGLE_CLIENT_SECRET: z.string(),
+    UPLOADTHING_SECRET: z.string(),
 
   },
 
@@ -57,9 +59,9 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    // GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-    // GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -107,7 +107,8 @@ model Product{
   price         Int
   image         Json?
   catergory     PRODUCT_CATEGORY @default(SKATEBOARD)
-  quantity       Int     @default(1)
+  quantity      Int     @default(1)
+  inventory     Int     @default(1)
   rating        Int     @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

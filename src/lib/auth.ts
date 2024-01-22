@@ -8,13 +8,14 @@ import {
     type NextAuthOptions,
     type DefaultSession
 } from 'next-auth'
+import { type USER_ROLE } from '@prisma/client'
+import { env } from '~/env.mjs'
 
 // import GoogleProvider from "next-auth/providers/google"
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
-//Prisma Adapter is used to connect NextAuth.js to Prisma. 
-// import { env } from '~/env.mjs'
 import { prisma } from './db'
 //prisma is a configured instance of prisma client. It is used to connect to and interact with the database.
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
+//Prisma Adapter is used to connect NextAuth.js to Prisma. 
 
  
 //configuring the authentication logic using nextauth.js
@@ -28,9 +29,18 @@ declare module "next-auth"{
         user: {
             id: string;
             //...other properties
+            role: USER_ROLE;
+            active: boolean;
+            seller: boolean
 
         } & DefaultSession["user"]; // way of refferring to  a subtype (user) inside a larger type (Defaultsession)    
         //adds a new id property to the user object in session. We are saying, in addition to all the properties from DefaultSession["user"], add id property of type string
+    }
+
+    interface User{
+        role: USER_ROLE;
+        active: boolean;
+        seller: boolean
     }
 }
 
