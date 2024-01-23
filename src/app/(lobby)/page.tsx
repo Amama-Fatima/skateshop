@@ -1,8 +1,3 @@
-import { Button } from "~/components/ui/button"
-
-
-//  <div className="flex max-w-[980px] flex-col items-start gap-2">
-//<p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
 export default function IndexPage(){
   return(
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
@@ -16,9 +11,6 @@ export default function IndexPage(){
           into your apps. Free. Open Source. And Next.js 13 Ready.
         </p>
       </div>
-      <form>
-        <Button>Submit</Button>
-      </form>
     </section>
   )
 }

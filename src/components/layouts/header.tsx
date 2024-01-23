@@ -1,8 +1,8 @@
 'use client'
 
 import React from "react";
-import MainNav from "~/components/main-nav";//
-import { ThemeToggle } from "~/components/theme-toggle";
+import MainNav from "~/components/layouts/main-nav";//
+import { Combobox } from "../combobox";
 import { siteConfig } from "~/config/site";//
 import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuContent } from '~/components/ui/dropdown-menu'
 import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";//
@@ -26,6 +26,7 @@ export default function Header ({user}: SiteHeaderProps): JSX.Element {
           <MainNav items={siteConfig.MainNav} />
           <div>
             <nav className='flex flex-1 items-center space-x-1'>
+              <Combobox />
               <Button
               variant="ghost"
               size="sm"
@@ -58,12 +59,12 @@ export default function Header ({user}: SiteHeaderProps): JSX.Element {
                     </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href='/stores'>
+                    <Link href='/account/stores'>
                       <Icons.store className="mr-2 h-4 w-4" /> Stores
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href='/settings'>
+                    <Link href='/account/settings'>
                       <Icons.settings className="mr-2 h-4 w-4" /> Settings
                     </Link>
                   </DropdownMenuItem>

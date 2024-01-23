@@ -2,25 +2,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// This configuration tells Prisma to generate a client library using the prisma-client-js provider. Once the client library is generated, you can use it in your JavaScript or TypeScript code to interact with your database.
 
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")
-  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
-
-
-
-model Example {
-  id        String @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-}
-
 
 model Account {
     id                String  @id @default(cuid())
@@ -28,12 +15,12 @@ model Account {
     type              String
     provider          String 
     providerAccountId String
-    refresh_token     String? @db.Text //  refresh token is a special kind of token that is used to obtain a renewed access token. When an access token expires, the client can use the refresh token to get a new access token without requiring the user to go through the authentication flow again. This is particularly useful for maintainig a session or connection without interrupting the user experience.
-    access_token      String? @db.Text // @db.Text access_tokens grant temp access to an API or resource. Its used by the client to make authenticated requests on behalf of the user. Access tokens are short lived anf usually expire after a certain period defined by expired_at
+    refresh_token     String? @db.Text 
+    access_token      String? @db.Text 
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? @db.Text // @db.Text  id token is a json web token that has claims about the authentication of of an end user by an authorization server when using a client and potentially other requested claims. The id token is used to authenticate the user and can provide 
+    id_token          String? @db.Text 
     session_state     String?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   
@@ -42,12 +29,6 @@ model Account {
 
 
 
-// Here's a breakdown of the fields:
-
-// provider: This field represents the third-party authentication provider, such as Google, Facebook, or Twitter.
-// providerAccountId: This field represents the unique identifier assigned to the user by the third-party authentication provider.
-// The combination of provider and providerAccountId uniquely identifies an account for a user on a specific third-party authentication provider. For example, a user may have a Google account with a providerAccountId of "12345" and a Facebook account with a providerAccountId of "67890". The @@unique([provider, providerAccountId]) constraint ensures that these accounts are treated as distinct and that no duplicate accounts are created for the same user on the same provider.
-// refresh_token: This field represents the refresh token that is used to obtain a renewed access token. When an access token expires, the client can use the refresh token to get a new access token without requiring the user to go through the authentication flow again. This is particularly useful for maintaining a session or connection without interrupting the user experience.
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique
@@ -105,7 +86,7 @@ model Product{
   name          String
   description   String? @db.Text
   price         Int
-  image         Json?
+  image         String?
   catergory     PRODUCT_CATEGORY @default(SKATEBOARD)
   quantity      Int     @default(1)
   inventory     Int     @default(1)
@@ -129,3 +110,11 @@ enum PRODUCT_CATEGORY{
 
 
 
+// Here's a breakdown of the fields:
+
+// provider: This field represents the third-party authentication provider, such as Google, Facebook, or Twitter.
+// providerAccountId: This field represents the unique identifier assigned to the user by the third-party authentication provider.
+// The combination of provider and providerAccountId uniquely identifies an account for a user on a specific third-party authentication provider. For example, a user may have a Google account with a providerAccountId of "12345" and a Facebook account with a providerAccountId of "67890". The @@unique([provider, providerAccountId]) constraint ensures that these accounts are treated as distinct and that no duplicate accounts are created for the same user on the same provider.
+// refresh_token: This field represents the refresh token that is used to obtain a renewed access token. When an access token expires, the client can use the refresh token to get a new access token without requiring the user to go through the authentication flow again. This is particularly useful for maintaining a session or connection without interrupting the user experience.
+
+// This configuration tells Prisma to generate a client library using the prisma-client-js provider. Once the client library is generated, you can use it in your JavaScript or TypeScript code to interact with your database.

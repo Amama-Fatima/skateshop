@@ -1,5 +1,5 @@
-import Header from "~/components/header";
-import SiteFooter from "~/components/site-footer";
+import Header from "~/components/layouts/header";
+import SiteFooter from "~/components/layouts/site-footer";
 import { getCurrentUser } from "~/lib/session";
 
 interface LofiLayoutProps{

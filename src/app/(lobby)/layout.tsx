@@ -1,5 +1,6 @@
-import Header from "~/components/header"
-import SiteFooter from "~/components/site-footer"
+import Header from "~/components/layouts/header"
+import SiteFooter from "~/components/layouts/site-footer"
+import { prisma } from "~/lib/db";
 import { getCurrentUser } from "~/lib/session"
 
 interface LofiLayoutProps{
@@ -9,12 +10,14 @@ interface LofiLayoutProps{
 export default async function LofiLayout({children}: LofiLayoutProps){
 
     // const user = await getCurrentUser();
-    //make a random user object
-    const user= {
-        name: "Chad",
-        image: "https://pbs.twimg.com/profile_images/1364491704816005632/4iY6yMgX_400x400.jpg",
-        email: "jjj"
-      }
+    
+    
+    //get the user from the database
+    const user = await prisma.user.findUnique({
+        where:{
+            id: "1"
+        }
+    })
 
     return(
         <div>
@@ -23,7 +26,7 @@ export default async function LofiLayout({children}: LofiLayoutProps){
                 name: user?.name,
                 image: user?.image,
                 email: user?.email
-            
+                
             }}
             />
             <main>{children}</main>
@@ -31,3 +34,8 @@ export default async function LofiLayout({children}: LofiLayoutProps){
         </div>
     )
 }
+// const user= {
+//     name: "Chad",
+//     image: "https://pbs.twimg.com/profile_images/1364491704816005632/4iY6yMgX_400x400.jpg",
+//     email: "jjj"
+//   }
