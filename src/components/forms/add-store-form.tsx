@@ -1,17 +1,15 @@
 "use client"
-import { PRODUCT_CATEGORY } from "@prisma/client"
 import * as React from "react"
-import {z} from "zod"
-import {useForm, type SubmitHandler} from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Label } from "../ui/label"
-import { Input } from "../ui/input"
+import { PRODUCT_CATEGORY } from "@prisma/client"
+import { useForm, type SubmitHandler } from "react-hook-form"
+import { z } from "zod"
 
+import { Input } from "~/components/ui/input"
+import { Label } from "~/components/ui/label"
 
-
-interface EditStoreFormProps{
-    storeId: string
-
+interface AddStoreFormProps {
+  userId: string
 }
 
 
@@ -36,17 +34,15 @@ const schema = z.object({
 
 type Inputs = z.infer<typeof schema>
 
-
-export function EditStoreForm({storeId}: EditStoreFormProps){
-    console.log(storeId)
-
+export function AddStoreForm({userId}: AddStoreFormProps){
+    console.log(userId)
 
     const {register, handleSubmit, formState, control, setValue, watch, reset} = 
         useForm<Inputs>({
             resolver: zodResolver(schema),
         })
-    
 
+    
     const onSubmit: SubmitHandler<Inputs> = (data)=>{
         console.log(data)
 
@@ -55,26 +51,25 @@ export function EditStoreForm({storeId}: EditStoreFormProps){
 
 
     return(
-        
-            <form 
-            onSubmit={(...args)=> void handleSubmit(onSubmit)(...args)}
-            className="grid w-full gap-5">
-                <fieldset>
-                    <Label htmlFor="name" >Name</Label>
-                    <Input 
-                    id="name" 
-                    type="text" 
-                    placeholder="Name" 
-                    {...register("name", {required: true})}
-                    />
-                </fieldset>
+        <form
+        onSubmit={(...args)=> void handleSubmit(onSubmit)(...args)}
+        className="grid w-full gap-5"
+        >
+            <fieldset className="grid gap-2.5">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                id="name"
+                type="text"
+                placeholder="Name"
+                {...register("name", { required: true })}
+                />
                 {formState.errors.name && (
-                    <p className="text-sm text-red-500 dark:text-red-500">
-                        {formState.errors.name.message}
-                        
-                    </p>
+                <p className="text-sm text-red-500 dark:text-red-500">
+                    {formState.errors.name.message}
+                </p>
                 )}
-            </form>
-        
+            </fieldset>
+
+        </form>
     )
 }
