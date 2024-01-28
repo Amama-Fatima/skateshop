@@ -1,14 +1,12 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-
-import { prisma } from "~/lib/db"
-import { AddProductForm } from "~/components/forms/add-product-form"
 import { EditProductForm } from "~/components/forms/edit-product-form"
 import { HeaderDescrip } from "~/components/header-descrip"
+import { prisma } from "~/lib/db"
 
 export const metadata: Metadata = {
-  title: "Manage Store",
-  description: "Manage your store and products.",
+  title: "Edit Product",
+  description: "Edit your product.",
 }
 
 interface EditProductPageProps {
@@ -43,10 +41,7 @@ export default async function EditProductPage({
 
   return (
     <section className="container grid w-full items-center gap-6 pb-8 pt-6 md:py-10">
-      <HeaderDescrip
-        title="Manage Store"
-        description="Manage your store and products."
-      />
+      <HeaderDescrip title="Edit Product" description="Edit your product." />
       <EditProductForm productId={product.id} />
     </section>
   )
