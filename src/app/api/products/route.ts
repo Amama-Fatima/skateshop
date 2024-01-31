@@ -9,9 +9,6 @@ const getProductsSchema = z.object({
   storeId: z.string(),
   page: z.number().int().default(0),
   perPage: z.number().int().default(10),
-  name: z.string().optional(),
-  sortBy: z.enum(["name", "price", "createdAt", "inventory"]).optional(),
-  sortDesc: z.boolean().default(false),
 })
 
 export async function POST(req: NextRequest) {
@@ -26,14 +23,8 @@ export async function POST(req: NextRequest) {
 
     const input = getProductsSchema.parse(await req.json())
     const params: Prisma.ProductFindManyArgs = {
-      orderBy: input.sortBy
-        ? {
-            [input.sortBy]: input.sortDesc ? "desc" : "asc",
-          }
-        : undefined,
       where: {
         storeId: input.storeId,
-        name: input.name ? input.name : undefined,
       },
     }
 
