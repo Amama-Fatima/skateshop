@@ -1,12 +1,6 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type Dispatch,
-  type HTMLAttributes,
-  type ReactNode,
-  type SetStateAction,
-} from "react"
+"use client"
+
+import * as React from "react"
 import { rankItem } from "@tanstack/match-sorter-utils"
 import {
   flexRender,
@@ -26,6 +20,15 @@ import {
   type SortingState,
   type Table,
 } from "@tanstack/react-table"
+import { Icons } from "~/components/icons"
+import { Button } from "~/components/ui/button"
+import { Input } from "~/components/ui/input"
+import { Label } from "~/components/ui/label"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover"
 import {
   Select,
   SelectContent,
@@ -35,40 +38,35 @@ import {
 } from "~/components/ui/select"
 import { cn } from "~/lib/utils"
 
-import { Icons } from "./icons"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
-
-interface Props<TData, TValue = unknown> {
-  tableTitle?: ReactNode
+interface ReactTableProps<TData, TValue = unknown> {
+  tableTitle?: string
+  addNewButton?: React.ReactNode
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   isLoading?: boolean
   isRefetching?: boolean
   isError?: boolean
   state?: {
-    pagination?: PaginationState
     globalFilter?: string
+    pagination?: PaginationState
   }
-  setPagination?: Dispatch<SetStateAction<PaginationState>>
-  manualPagination?: boolean
-  setGlobalFilter?: Dispatch<SetStateAction<string>>
+  setGlobalFilter?: React.Dispatch<React.SetStateAction<string>>
   disableGlobalFilter?: boolean
+  setPagination?: React.Dispatch<React.SetStateAction<PaginationState>>
+  manualPagination?: boolean
   disableColumnVisibility?: boolean
   itemsPerPageOptions?: number[]
   itemsCount?: number
-  headerRowProps?: HTMLAttributes<HTMLTableRowElement>
-  headerCellProps?: HTMLAttributes<HTMLTableCellElement>
+  headerRowProps?: React.HTMLAttributes<HTMLTableRowElement>
+  headerCellProps?: React.HTMLAttributes<HTMLTableCellElement>
   bodyRowProps?:
-    | ((row: Row<TData>) => HTMLAttributes<HTMLTableRowElement>)
-    | HTMLAttributes<HTMLTableRowElement>
-  bodyCellProps?: HTMLAttributes<HTMLTableCellElement>
-  footerRowProps?: HTMLAttributes<HTMLTableRowElement>
-  footerCellProps?: HTMLAttributes<HTMLTableCellElement>
-  ascendingSortIndecator?: ReactNode
-  descendingSortIndecator?: ReactNode
+    | ((row: Row<TData>) => React.HTMLAttributes<HTMLTableRowElement>)
+    | React.HTMLAttributes<HTMLTableRowElement>
+  bodyCellProps?: React.HTMLAttributes<HTMLTableCellElement>
+  footerRowProps?: React.HTMLAttributes<HTMLTableRowElement>
+  footerCellProps?: React.HTMLAttributes<HTMLTableCellElement>
+  ascendingSortIndecator?: React.ReactNode
+  descendingSortIndecator?: React.ReactNode
   rowHoverEffect?: boolean
 }
 
@@ -79,7 +77,6 @@ const fuzzyFilter: FilterFn<unknown> = (
   addMeta
 ) => {
   // Rank the item
-
   const itemRank = rankItem(row.getValue(columnId), value)
 
   // Store the itemRank info
@@ -92,26 +89,26 @@ const fuzzyFilter: FilterFn<unknown> = (
 }
 
 export function ReactTable<TData, TValue = unknown>(
-  props: Props<TData, TValue>
+  props: ReactTableProps<TData, TValue>
 ) {
   const { manualPagination, state } = props
 
-  const [sorting, setSorting] = useState<SortingState>([
+  const [sorting, setSorting] = React.useState<SortingState>([
     {
       id: "createdAt",
       desc: true,
     },
   ])
-
-  const [globalFilter, setGlobalFilter] = useState<string>(
+  const [globalFilter, setGlobalFilter] = React.useState<string>(
     state?.globalFilter ?? ""
   )
 
-  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: state?.pagination?.pageIndex ?? 0,
-    pageSize: state?.pagination?.pageSize ?? 10,
-  })
-  const pagination = useMemo(
+  const [{ pageIndex, pageSize }, setPagination] =
+    React.useState<PaginationState>({
+      pageIndex: state?.pagination?.pageIndex ?? 0,
+      pageSize: state?.pagination?.pageSize ?? 10,
+    })
+  const pagination = React.useMemo(
     () => ({
       pageIndex,
       pageSize,
@@ -135,7 +132,7 @@ export function ReactTable<TData, TValue = unknown>(
           )
         : undefined,
     manualPagination,
-    onSortingChange: setSorting ?? setSorting,
+    onSortingChange: setSorting,
     onPaginationChange: props.setPagination ?? setPagination,
     onGlobalFilterChange: props.setGlobalFilter ?? setGlobalFilter,
     getSortedRowModel: getSortedRowModel(),
@@ -149,25 +146,30 @@ export function ReactTable<TData, TValue = unknown>(
   })
 
   return (
-    <>
-      <div className="flex py-4">
-        <h2 className="text-2xl">{props.tableTitle}</h2>
-        <div className="ml-auto mr-0 flex gap-4">
-          {props.disableGlobalFilter ? null : (
-            <div>
-              <Label htmlFor="globalFilterInput">Search any field</Label>
-              <Input
-                id="globalFilterInput"
-                placeholder="Search..."
-                value={globalFilter}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                className="w-40 border border-muted"
-              />
-            </div>
-          )}
+    <div className="space-y-2.5 overflow-hidden">
+      <div className="flex flex-col space-y-2">
+        {props.tableTitle && <h2>{props.tableTitle}</h2>}
+        <div className="flex items-center justify-between space-x-4 overflow-x-auto whitespace-nowrap py-2.5">
+          <div className="flex items-center space-x-4">
+            {props.addNewButton && props.addNewButton}
+            {props.disableGlobalFilter ? null : (
+              <div>
+                <Label htmlFor="globalFilterInput" className="sr-only">
+                  Search any field
+                </Label>
+                <Input
+                  id="globalFilterInput"
+                  placeholder="Search.."
+                  value={globalFilter}
+                  onChange={(e) => setGlobalFilter(e.target.value)}
+                  className="w-40 border border-muted"
+                />
+              </div>
+            )}
+          </div>
           {props.disableColumnVisibility ? null : (
             <Popover>
-              <PopoverTrigger>
+              <PopoverTrigger asChild>
                 <Button variant="outline">
                   Show Columns
                   <Icons.chevronDown
@@ -187,10 +189,18 @@ export function ReactTable<TData, TValue = unknown>(
                         onChange: table.getToggleAllColumnsVisibilityHandler(),
                       }}
                     />
-                    <Label>Toggle All</Label>
+                    <Label
+                      htmlFor="toggleAllColumns"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Toggle All
+                    </Label>
                   </div>
                   {table.getAllLeafColumns().map((column) => (
-                    <div key={column.id}>
+                    <div
+                      key={column.id}
+                      className="flex items-center space-x-2"
+                    >
                       <input
                         type="checkbox"
                         id={column.id}
@@ -213,14 +223,14 @@ export function ReactTable<TData, TValue = unknown>(
           )}
         </div>
       </div>
-      <div className="overflow-x-auto overflow-y-hidden pb-1">
+      <div className="overflow-x-auto overflow-y-hidden py-2.5">
         <table className="w-full border-collapse border">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr {...(props.headerRowProps ?? {})} key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
-                    className="border-collapse border px-4 pb-3.5 pt-2 text-left text-xs font-bold tracking-wide text-muted-foreground md:text-sm"
+                    className="border-collapse border px-4 pb-3.5 pt-2 text-left text-xs font-bold tracking-wide md:text-sm"
                     {...(props.headerCellProps ?? {})}
                     key={header.id}
                     colSpan={header.colSpan}
@@ -280,35 +290,33 @@ export function ReactTable<TData, TValue = unknown>(
               </tr>
             ) : null}
             {!(props.isLoading || props.isRefetching || props.isError)
-              ? table.getRowModel().rows.map((row) => {
-                  return (
-                    <tr
-                      className={cn(
-                        props.rowHoverEffect &&
-                          "cursor-pointer transition-colors hover:bg-muted/25"
-                      )}
-                      {...(typeof props.bodyRowProps === "function"
-                        ? props.bodyRowProps(row)
-                        : props.bodyRowProps ?? {})}
-                      key={row.id}
-                    >
-                      {row.getVisibleCells().map((cell) => {
-                        return (
-                          <td
-                            className="border-collapse border p-2"
-                            {...(props.bodyCellProps ?? {})}
-                            key={cell.id}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </td>
-                        )
-                      })}
-                    </tr>
-                  )
-                })
+              ? table.getRowModel().rows.map((row) => (
+                  <tr
+                    className={cn(
+                      props.rowHoverEffect &&
+                        "cursor-pointer transition-colors hover:bg-muted/25"
+                    )}
+                    {...(typeof props.bodyRowProps === "function"
+                      ? props.bodyRowProps(row)
+                      : props.bodyRowProps ?? {})}
+                    key={row.id}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <td
+                          className="border-collapse border p-2"
+                          {...(props.bodyCellProps ?? {})}
+                          key={cell.id}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))
               : null}
             {!(props.isLoading || props.isRefetching || props.isError) &&
             props.data.length === 0 ? (
@@ -326,36 +334,33 @@ export function ReactTable<TData, TValue = unknown>(
           </tbody>
         </table>
       </div>
-      <div className="mt-5 flex w-full flex-wrap items-center gap-2 text-sm md:text-base">
-        <Button
-          aria-label="paginate back by 1 page"
-          size="sm"
-          variant="outline"
-          className="size-9 p-0"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage}
-        >
-          <Icons.chevronLeft className="size-5" aria-hidden="true" />
-        </Button>
-        <Button
-          aria-label="paginate forward by 1 page"
-          size="sm"
-          variant="outline"
-          className="size-9 p-0"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage}
-        >
-          <Icons.chevronRight className="size-5" aria-hidden="true" />
-        </Button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </strong>
-        </span>
-        <span className="hidden items-center gap-1 md:flex">
-          | Go to page:
+      <div className="flex w-full flex-col items-center gap-5 py-4 text-base sm:flex-row">
+        <div className="flex items-center space-x-2.5">
+          <Button
+            aria-label="Paginate back by 1 page"
+            size="sm"
+            variant="outline"
+            className="size-9 p-0"
+            onClick={() => table.previousPage()}
+            disabled={props.isLoading || props.isRefetching}
+          >
+            <Icons.chevronLeft className="size-5" aria-hidden="true" />
+          </Button>
+          <Button
+            aria-label="Paginate forward by 1 page"
+            size="sm"
+            variant="outline"
+            className="size-9 p-0"
+            onClick={() => table.nextPage()}
+            disabled={
+              !table.getCanNextPage() || props.isLoading || props.isRefetching
+            }
+          >
+            <Icons.chevronRight className="size-5" aria-hidden="true" />
+          </Button>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          Go to page:
           <Input
             type="number"
             defaultValue={table.getState().pagination.pageIndex + 1}
@@ -365,7 +370,7 @@ export function ReactTable<TData, TValue = unknown>(
             }}
             className="h-9 w-16"
           />
-        </span>
+        </div>
         <Select
           value={table.getState().pagination.pageSize.toString()}
           onValueChange={(value) => {
@@ -390,7 +395,7 @@ export function ReactTable<TData, TValue = unknown>(
           </SelectContent>
         </Select>
       </div>
-    </>
+    </div>
   )
 }
 
@@ -407,7 +412,7 @@ function Filter<TData, TValue = unknown>({
 
   const columnFilterValue = column.getFilterValue()
 
-  const sortedUniqueValues = useMemo(
+  const sortedUniqueValues = React.useMemo(
     () =>
       typeof firstValue === "number"
         ? []
@@ -450,6 +455,7 @@ function Filter<TData, TValue = unknown>({
   )
 }
 
+// A debounced input react component
 interface DebouncedInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   value: string | number
@@ -457,26 +463,25 @@ interface DebouncedInputProps
   debounce?: number
 }
 
-// A debounced input react component
 const DebouncedInput = ({
   value: initialValue,
   onChange,
   debounce = 500,
   ...props
 }: DebouncedInputProps) => {
-  const [value, setValue] = useState(initialValue)
+  const [value, setValue] = React.useState(initialValue)
 
-  useEffect(() => {
+  React.useEffect(() => {
     setValue(initialValue)
   }, [initialValue])
 
-  useEffect(() => {
+  React.useEffect(() => {
     const timeout = setTimeout(() => {
       onChange(value)
     }, debounce)
 
     return () => clearTimeout(timeout)
-  }, [value, debounce, onChange])
+  }, [value, debounce])
 
   return (
     <Input
