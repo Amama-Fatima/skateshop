@@ -23,8 +23,8 @@ interface FileInputProps<TFieldValues extends FieldValues>
   accept?: Accept
   maxSize: number
   maxFiles?: number
-  files: File[] | null
-  setFiles: React.Dispatch<React.SetStateAction<File[] | null>>
+  parentFiles: File[] | null
+  setParentFiles: React.Dispatch<React.SetStateAction<File[] | null>>
   previewType?: "image" | "name"
   isUploading?: boolean
   disabled?: boolean
@@ -37,16 +37,18 @@ export function FileInput<TFieldValues extends FieldValues>({
     "image/png": [],
     "image/jpeg": [],
   },
-  maxSize,
+  maxSize = 1024 * 1024 * 8,
   maxFiles = 1,
-  files,
-  setFiles,
+  parentFiles,
+  setParentFiles,
   previewType = "image",
   isUploading = false,
   disabled = false,
   className,
   ...props
 }: FileInputProps<TFieldValues>) {
+  const [files, setFiles] = React.useState<File[] | null>(parentFiles ?? null)
+
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       setFiles(acceptedFiles)
