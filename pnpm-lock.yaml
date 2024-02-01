@@ -122,6 +122,9 @@ dependencies:
   uploadthing:
     specifier: ^6.2.0
     version: 6.2.0
+  zact:
+    specifier: ^0.0.2
+    version: 0.0.2(next@13.5.6)
   zod:
     specifier: ^3.22.4
     version: 3.22.4
@@ -4869,6 +4872,26 @@ packages:
 
   /yoga-wasm-web@0.3.3:
     resolution: {integrity: sha512-N+d4UJSJbt/R3wqY7Coqs5pcV0aUj2j9IaQ3rNj9bVCLld8tTGKRa2USARjnvZJWVx1NDmQev8EknoczaOQDOA==}
+    dev: false
+
+  /zact@0.0.2(next@13.5.6):
+    resolution: {integrity: sha512-mVXKgUI9FOv9dkCuY2a6yKzFFWRhkvdBlVXVa/FCXDHB3kkqOv4N59AGwC2lHJdGxpT9gX9VzHX9Pxei9fdoJA==}
+    peerDependencies:
+      next: ^13.2.5-canary.x
+    dependencies:
+      next: 13.5.6(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      zod: 3.22.4
+      zod-validation-error: 1.5.0(zod@3.22.4)
+    dev: false
+
+  /zod-validation-error@1.5.0(zod@3.22.4):
+    resolution: {integrity: sha512-/7eFkAI4qV0tcxMBB/3+d2c1P6jzzZYdYSlBuAklzMuCrJu5bzJfHS0yVAS87dRHVlhftd6RFJDIvv03JgkSbw==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      zod: ^3.18.0
+    dependencies:
+      zod: 3.22.4
     dev: false
 
   /zod@3.22.4:

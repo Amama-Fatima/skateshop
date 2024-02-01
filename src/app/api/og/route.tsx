@@ -1,26 +1,26 @@
 //this file handles the server side generation of open graph images
 
-import type { ServerRuntime } from "next";
-import { ImageResponse } from "next/dist/compiled/@vercel/og";
-import { ogImageSchema } from "~/lib/validations/og";
+import type { ServerRuntime } from "next"
+import { ImageResponse } from "next/dist/compiled/@vercel/og"
+import { ogImageSchema } from "~/lib/validations/og"
 
-export const runtime: ServerRuntime = "edge";
+export const runtime: ServerRuntime = "edge"
 //ServerRuntime is a type that tells Next.js that this file should be run on the server side
 //edge means that this file should be run on the edge server which is a type of server that is closer to the user geographically
-export function GET(req: Request){
-    try{
-        const url = new URL(req.url);
-        //url.searchParams return an object of the type URLSearchParams which is an iterable object. Each iteration returns a key-value pair representing a single query parameter
-        //Object.fromEntries() takes an iterable object and returns an object whose properties are the key-value pairs of the iterable object
-        const parsedValues = ogImageSchema.parse(
-            Object.fromEntries(url.searchParams)
-        );
-        const {mode, title, description} = parsedValues;
-        const paint = mode === "dark" ? "#fff" : "#000";
+export function GET(req: Request) {
+  try {
+    const url = new URL(req.url)
+    //url.searchParams return an object of the type URLSearchParams which is an iterable object. Each iteration returns a key-value pair representing a single query parameter
+    //Object.fromEntries() takes an iterable object and returns an object whose properties are the key-value pairs of the iterable object
+    const parsedValues = ogImageSchema.parse(
+      Object.fromEntries(url.searchParams)
+    )
+    const { mode, title, description } = parsedValues
+    const paint = mode === "dark" ? "#fff" : "#000"
 
-        return new ImageResponse(
-        (
-            <div
+    return new ImageResponse(
+      (
+        <div
           tw="h-full w-full flex items-center justify-center flex-col"
           style={{
             color: paint,
@@ -57,24 +57,21 @@ export function GET(req: Request){
             </div>
           </div>
         </div>
-        ),
-        {
-            width: 1200,
-            height: 630,
-        }
-        )
-    } catch (error) {
-        error instanceof Error
-        ? console.log(`${error.message}`)
-        : console.log(error);
-        return new Response(`Failed to generate the image`, {
-        status: 500,
-        });
-    }
-
+      ),
+      {
+        width: 1200,
+        height: 630,
+      }
+    )
+  } catch (error) {
+    error instanceof Error
+      ? console.log(`${error.message}`)
+      : console.log(error)
+    return new Response(`Failed to generate the image`, {
+      status: 500,
+    })
+  }
 }
-
-
 
 // When we say "a client makes a request to a route," it can mean either of the scenarios you've described, depending on the context. Let's break down both situations:
 

@@ -1,75 +1,91 @@
 "use client"
-import * as React from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { PRODUCT_CATEGORY } from "@prisma/client"
-import { useForm, type SubmitHandler } from "react-hook-form"
-import { z } from "zod"
 
+import * as React from "react"
+import { useRouter } from "next/navigation"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
+import { addStoreAction } from "~/lib/actions"
+import { addStoreSchema } from "~/lib/validations/store"
+import { useForm, type SubmitHandler } from "react-hook-form"
+import { useZact } from "zact/client"
+import { type z } from "zod"
+
+import { Icons } from "../icons"
+import { Button } from "../ui/button"
+import { Textarea } from "../ui/textarea"
 
 interface AddStoreFormProps {
   userId: string
 }
 
+type Inputs = z.infer<typeof addStoreSchema>
 
-const schema = z.object({
-    name: z.string().min(1, {
-        message: "Store name must be at least 1 character long",
-    }),
-    description: z.string().optional(),
-    price: z.number().positive({
-        message: "Price must be a positive number",
-    }),
-    images: z.array(z.string()).optional(),
-    category: z.nativeEnum(PRODUCT_CATEGORY),
-    quantity: z.number().positive({
-        message: "Quantity must be a positive number",
-    }),
-    inventory: z.number().positive({
-        message: "Inventory must be a positive number",
-    }),
-    
-})
+export function AddStoreForm({ userId }: AddStoreFormProps) {
+  console.log(userId)
 
-type Inputs = z.infer<typeof schema>
+  const router = useRouter()
+  const { mutate, isLoading } = useZact(addStoreAction)
 
-export function AddStoreForm({userId}: AddStoreFormProps){
-    console.log(userId)
+  const { register, handleSubmit, formState, reset } = useForm<Inputs>({
+    resolver: zodResolver(addStoreSchema),
+  })
 
-    const {register, handleSubmit, formState, control, setValue, watch, reset} = 
-        useForm<Inputs>({
-            resolver: zodResolver(schema),
-        })
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    reset()
 
-    
-    const onSubmit: SubmitHandler<Inputs> = (data)=>{
-        console.log(data)
+    await mutate({
+      ...data,
+      userId,
+    })
 
-        //reset()
-    }
+    router.push("/account/stores")
+    router.refresh()
+  }
 
-
-    return(
-        <form
-        onSubmit={(...args)=> void handleSubmit(onSubmit)(...args)}
-        className="grid w-full gap-5"
-        >
-            <fieldset className="grid gap-2.5">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                id="name"
-                type="text"
-                placeholder="Name"
-                {...register("name", { required: true })}
-                />
-                {formState.errors.name && (
-                <p className="text-sm text-red-500 dark:text-red-500">
-                    {formState.errors.name.message}
-                </p>
-                )}
-            </fieldset>
-
-        </form>
-    )
+  return (
+    <form
+      onSubmit={(...args) => void handleSubmit(onSubmit)(...args)}
+      className="grid w-full gap-5"
+    >
+      <fieldset className="grid gap-2.5">
+        <Label htmlFor="name">Name</Label>
+        <Input
+          id="name"
+          type="text"
+          placeholder="Type store name here..."
+          {...register("name", { required: true })}
+          disabled={isLoading}
+        />
+        {formState.errors.name && (
+          <p className="text-sm text-red-500 dark:text-red-500">
+            {formState.errors.name.message}
+          </p>
+        )}
+      </fieldset>
+      <fieldset className="grid gap-2.5">
+        <Label htmlFor="description">Description</Label>
+        <Textarea
+          id="description"
+          placeholder="Type store description here..."
+          {...register("description", { required: true })}
+          disabled={isLoading}
+        />
+        {formState.errors.description && (
+          <p className="text-sm text-red-500 dark:text-red-500">
+            {formState.errors.description.message}
+          </p>
+        )}
+      </fieldset>
+      <Button type="submit" disabled={isLoading}>
+        {isLoading && (
+          <Icons.spinner
+            className="mr-2 size-4 animate-spin"
+            aria-hidden="true"
+          />
+        )}
+        Add Store
+      </Button>
+    </form>
+  )
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { notFound, redirect } from "next/navigation"
+import { redirect } from "next/navigation"
 import { AddStoreForm } from "~/components/forms/add-store-form"
 import { HeaderDescrip } from "~/components/header-descrip"
 import { authOptions } from "~/lib/auth"
