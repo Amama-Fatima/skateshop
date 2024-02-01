@@ -16,9 +16,9 @@ import {
   type ColumnDef,
   type FilterFn,
   type PaginationState,
+  type Table as ReactTable,
   type Row,
   type SortingState,
-  type Table,
 } from "@tanstack/react-table"
 import { Icons } from "~/components/icons"
 import { Button } from "~/components/ui/button"
@@ -88,7 +88,7 @@ const fuzzyFilter: FilterFn<unknown> = (
   return itemRank.passed
 }
 
-export function ReactTable<TData, TValue = unknown>(
+export function Table<TData, TValue = unknown>(
   props: ReactTableProps<TData, TValue>
 ) {
   const { manualPagination, state } = props
@@ -115,6 +115,7 @@ export function ReactTable<TData, TValue = unknown>(
     }),
     [pageIndex, pageSize]
   )
+
   const table = useReactTable<TData>({
     columns: props.columns,
     data: props.data,
@@ -230,13 +231,13 @@ export function ReactTable<TData, TValue = unknown>(
               <tr {...(props.headerRowProps ?? {})} key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
-                    className="border-collapse border px-4 pb-3.5 pt-2 text-left text-xs font-bold tracking-wide md:text-sm"
+                    className="border-collapse border px-4 pb-3.5 pt-2 text-left text-sm font-bold tracking-wide"
                     {...(props.headerCellProps ?? {})}
                     key={header.id}
                     colSpan={header.colSpan}
                   >
                     {header.isPlaceholder ? null : (
-                      <>
+                      <div className="space-y-2.5">
                         <div
                           {...{
                             className: header.column.getCanSort()
@@ -259,7 +260,7 @@ export function ReactTable<TData, TValue = unknown>(
                             <Filter column={header.column} table={table} />
                           </div>
                         ) : null}
-                      </>
+                      </div>
                     )}
                   </th>
                 ))}
@@ -304,7 +305,7 @@ export function ReactTable<TData, TValue = unknown>(
                     {row.getVisibleCells().map((cell) => {
                       return (
                         <td
-                          className="border-collapse border p-2"
+                          className="border-collapse border px-4 py-2"
                           {...(props.bodyCellProps ?? {})}
                           key={cell.id}
                         >
@@ -359,17 +360,29 @@ export function ReactTable<TData, TValue = unknown>(
             <Icons.chevronRight className="size-5" aria-hidden="true" />
           </Button>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          Go to page:
-          <Input
-            type="number"
-            defaultValue={table.getState().pagination.pageIndex + 1}
-            onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0
-              table.setPageIndex(page)
-            }}
-            className="h-9 w-16"
-          />
+        <div className="flex items-center gap-1">
+          <span>Page</span>
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </strong>
+        </div>
+        <div className="flex items-center space-x-2.5">
+          {table.getPageOptions().map((page) => (
+            <Button
+              aria-label={`Go to page ${page + 1}`}
+              key={page}
+              size="sm"
+              variant="outline"
+              className="size-9 p-0"
+              onClick={() => {
+                table.setPageIndex(page)
+              }}
+              disabled={props.isLoading || props.isRefetching}
+            >
+              {page + 1}
+            </Button>
+          ))}
         </div>
         <Select
           value={table.getState().pagination.pageSize.toString()}
@@ -404,7 +417,7 @@ function Filter<TData, TValue = unknown>({
   table,
 }: {
   column: Column<TData, TValue>
-  table: Table<TData>
+  table: ReactTable<TData>
 }) {
   const firstValue = table
     .getPreFilteredRowModel()
@@ -434,7 +447,7 @@ function Filter<TData, TValue = unknown>({
       placeholder={`Range (${column.getFacetedMinMaxValues()?.[0] ?? ""} - ${
         column.getFacetedUniqueValues().size
       })`}
-      className="mt-2.5 w-36 rounded-none text-sm shadow"
+      className="w-36 text-sm shadow"
     />
   ) : (
     <>
@@ -448,7 +461,7 @@ function Filter<TData, TValue = unknown>({
         value={(columnFilterValue ?? "") as string}
         onChange={(value) => column.setFilterValue(value)}
         placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
-        className="mt-2 w-36 rounded-none text-sm shadow"
+        className="w-36 text-sm shadow"
         list={column.id + "list"}
       />
     </>

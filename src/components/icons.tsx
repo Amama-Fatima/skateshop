@@ -5,13 +5,17 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronsUpDown,
+  ChevronUp,
   Edit,
+  Filter,
   Gauge,
   Loader2,
   LogOut,
   MessageSquare,
   Moon,
   Plus,
+  Search,
   Settings,
   ShoppingBag,
   ShoppingCart,
@@ -23,11 +27,11 @@ import {
   Volume2,
   VolumeX,
   X,
-  type XIcon as LucideIcon,
+  type Icon as LucideIcon,
   type LucideProps,
 } from "lucide-react"
 
-export type Icon = typeof LucideIcon
+export type Icon = LucideIcon
 
 export const Icons = {
   sun: SunMedium,
@@ -37,11 +41,15 @@ export const Icons = {
   spinner: Loader2,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
+  chevronUp: ChevronUp,
   chevronDown: ChevronDown,
+  chevronUpDown: ChevronsUpDown,
   check: Check,
   add: Plus,
   trash: Trash,
   edit: Edit,
+  search: Search,
+  filter: Filter,
   alarm: AlarmClock,
   calendar: CalendarDays,
   slider: Sliders,

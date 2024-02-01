@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import type { Product, PRODUCT_CATEGORY } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query"
 import type { ColumnDef, PaginationState } from "@tanstack/react-table"
-import { ReactTable } from "~/components/react-table"
+import { Table } from "~/components/table"
 import { buttonVariants } from "~/components/ui/button"
 import { formatEnum, formatPrice } from "~/lib/utils"
 import dayjs from "dayjs"
@@ -67,7 +67,7 @@ export function Products({ storeId }: ProductsProps) {
     []
   )
 
-  const productsQuery = useQuery({
+  const { data, isLoading, isError, isRefetching } = useQuery({
     queryKey: ["products", storeId, pagination],
     queryFn: async () => {
       const response = await fetch("/api/products", {
@@ -93,30 +93,28 @@ export function Products({ storeId }: ProductsProps) {
   })
 
   return (
-    <ReactTable
-      tableTitle={
-        <div>
-          <div>{`Products (${productsQuery.data?.count ?? 0}) entries`}</div>
-          <Link
-            href={`/account/stores/${storeId}/products/new`}
-            className={buttonVariants({
-              variant: "outline",
-            })}
-          >
-            Add Product
-          </Link>
-        </div>
+    <Table
+      tableTitle={`Products (${data?.count ?? 0} entries)`}
+      addNewButton={
+        <Link
+          href={`/account/stores/${storeId}/products/add`}
+          className={buttonVariants({
+            variant: "outline",
+          })}
+        >
+          Add Product
+        </Link>
       }
       columns={columns}
-      data={productsQuery.data?.products ?? []}
+      data={data?.products ?? []}
       state={{
         pagination,
       }}
       setPagination={setPagination}
-      itemsCount={productsQuery.data?.count ?? 0}
-      isLoading={productsQuery.isLoading}
-      isRefetching={productsQuery.isFetching}
-      isError={productsQuery.isError}
+      itemsCount={data?.count ?? 0}
+      isLoading={isLoading}
+      isRefetching={isRefetching}
+      isError={isError}
       manualPagination
       rowHoverEffect
       disableGlobalFilter={false}
