@@ -1,31 +1,28 @@
-import { env } from "~/env.mjs";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client"
+import { env } from "~/env.mjs"
+
 //PrismaClient is a class
 
 //setting up and exporting a prisma client instance that can be used throughout app
 declare global {
-// eslint-disable-next-line no-var
-    var cachedPrisma: PrismaClient;
-//extending the global namespace to include a new variable cachedPrisma of type PrismaCLient    
+  // eslint-disable-next-line no-var
+  var cachedPrisma: PrismaClient
+  //extending the global namespace to include a new variable cachedPrisma of type PrismaCLient
 }
 
+let prisma: PrismaClient
 
-let prisma: PrismaClient;
+if (env.NODE_ENV === "production") {
+  prisma = new PrismaClient()
+} else {
+  if (!global.cachedPrisma) {
+    global.cachedPrisma = new PrismaClient()
+  }
 
-
-if(env.NODE_ENV === 'production'){
-    prisma = new PrismaClient();
-} else{
-    if(!global.cachedPrisma){
-        global.cachedPrisma = new PrismaClient();
-    }
-
-    prisma = global.cachedPrisma;
+  prisma = global.cachedPrisma
 }
 
-export {prisma}
-
-
+export { prisma }
 
 /**
  * reason for different logics of prisma client based on NODE_ENV
