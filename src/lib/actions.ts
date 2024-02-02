@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidateTag } from "next/cache"
+import { revalidatePath } from "next/cache"
 import { prisma } from "~/lib/db"
 import { addStoreSchema } from "~/lib/validations/store"
 import { zact } from "zact/server"
@@ -12,6 +12,16 @@ export const addStoreAction = zact(
     userId: z.string(),
   })
 )(async (input) => {
+  const storeWithSameName = await prisma.store.findFirst({
+    where: {
+      name: input.name,
+    },
+  })
+
+  if (storeWithSameName) {
+    throw new Error("Store with same name already exists")
+  }
+
   await prisma.store.create({
     data: {
       name: input.name,
@@ -24,6 +34,6 @@ export const addStoreAction = zact(
     },
   })
 
-  const tag = `user:${input.userId}`
-  revalidateTag(tag)
+  const path = "/account/stores"
+  revalidatePath(path)
 })

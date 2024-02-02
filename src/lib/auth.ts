@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     jwt: ({ token, user }) => {
       /* Step 1: update the token based on the user object */
-      console.log("User:", user)
+      // console.log("User:", user)
       if (user) {
         ;(token.id = user.id), (token.role = user.role)
         token.active = user.active
@@ -58,7 +58,7 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     session: ({ session, user, token }) => {
-      console.log("Token:", token) // Log the token object to the console
+      // console.log("Token:", token) // Log the token object to the console
 
       return {
         ...session,

@@ -40,7 +40,7 @@ export function AddStoreForm({ userId }: AddStoreFormProps) {
     })
 
     router.push("/account/stores")
-    router.refresh()
+    // router.refresh()
   }
 
   return (

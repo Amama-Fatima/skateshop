@@ -36,7 +36,11 @@ export function Products({ storeId }: ProductsProps) {
       {
         accessorKey: "category",
         header: "Category",
-        cell: ({ cell }) => formatEnum(cell.getValue() as PRODUCT_CATEGORY),
+        cell: ({ cell }) => {
+          // console.log("cell.getValue()", cell.getValue())
+          //nth is renderingin this cell
+          formatEnum(cell.getValue() as PRODUCT_CATEGORY)
+        },
       },
       {
         accessorKey: "price",
