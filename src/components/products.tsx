@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { Product, PRODUCT_CATEGORY } from "@prisma/client"
@@ -8,8 +8,7 @@ import { useQuery } from "@tanstack/react-query"
 import type { ColumnDef, PaginationState } from "@tanstack/react-table"
 import { Table } from "~/components/table"
 import { buttonVariants } from "~/components/ui/button"
-import { formatEnum, formatPrice } from "~/lib/utils"
-import dayjs from "dayjs"
+import { formatDate, formatEnum, formatPrice } from "~/lib/utils"
 
 interface ProductsProps {
   storeId: string
@@ -18,11 +17,12 @@ interface ProductsProps {
 export function Products({ storeId }: ProductsProps) {
   const router = useRouter()
 
-  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
-  const pagination = useMemo(
+  const [{ pageIndex, pageSize }, setPagination] =
+    React.useState<PaginationState>({
+      pageIndex: 0,
+      pageSize: 10,
+    })
+  const pagination = React.useMemo(
     () => ({
       pageIndex,
       pageSize,
@@ -30,11 +30,11 @@ export function Products({ storeId }: ProductsProps) {
     [pageIndex, pageSize]
   )
 
-  const columns = useMemo<ColumnDef<Product, unknown>[]>(
+  const columns = React.useMemo<ColumnDef<Product, unknown>[]>(
     () => [
       { accessorKey: "name", header: "Name" },
       {
-        accessorKey: "catergory",
+        accessorKey: "category",
         header: "Category",
         cell: ({ cell }) => formatEnum(cell.getValue() as PRODUCT_CATEGORY),
       },
@@ -42,7 +42,6 @@ export function Products({ storeId }: ProductsProps) {
         accessorKey: "price",
         header: "Price",
         cell: ({ cell }) => formatPrice(cell.getValue() as number),
-        enableColumnFilter: false,
       },
       {
         accessorKey: "quantity",
@@ -59,8 +58,7 @@ export function Products({ storeId }: ProductsProps) {
       {
         accessorKey: "createdAt",
         header: "Created At",
-        cell: ({ cell }) =>
-          dayjs(cell.getValue() as Date).format("DD/MM/YYYY, hh:mm a"),
+        cell: ({ cell }) => formatDate(cell.getValue() as Date),
         enableColumnFilter: false,
       },
     ],
@@ -121,11 +119,9 @@ export function Products({ storeId }: ProductsProps) {
       bodyRowProps={(row) => ({
         onClick: () => {
           const productId = row.original.id
-          router.push(`/account/stores/${storeId}/products/${productId}`)
+          void router.push(`/account/stores/${storeId}/products/${productId}`)
         },
       })}
     />
   )
 }
-
-export default Products

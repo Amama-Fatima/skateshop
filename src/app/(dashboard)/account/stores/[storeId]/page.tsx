@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { HeaderDescrip } from "~/components/header-descrip"
-import Products from "~/components/products"
+import { Products } from "~/components/products"
 import { prisma } from "~/lib/db"
 
 export const metadata: Metadata = {
@@ -24,6 +24,11 @@ export default async function EditStorePage({ params }: EditStorePageProps) {
     select: {
       id: true,
       name: true,
+      products: {
+        select: {
+          id: true,
+        },
+      },
     },
   })
 

@@ -14,7 +14,7 @@ import { prisma } from "./db"
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
-      // id: string
+      id: string
       role: USER_ROLE
       active: boolean
       seller: boolean
@@ -28,6 +28,15 @@ declare module "next-auth" {
   }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string
+    role?: USER_ROLE
+    active?: boolean
+    seller?: boolean
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -38,22 +47,30 @@ export const authOptions: NextAuthOptions = {
   ],
   secret: env.NEXTAUTH_SECRET,
   callbacks: {
-    jwt: ({ token, user }) => ({
-      ...token,
-      role: user?.role,
-      active: user?.active,
-      seller: user?.seller,
-    }),
-    session: ({ session, user, token }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        // id: user.id,
-        role: token.role,
-        active: token.active,
-        seller: token.seller,
-      },
-    }),
+    jwt: ({ token, user }) => {
+      /* Step 1: update the token based on the user object */
+      console.log("User:", user)
+      if (user) {
+        ;(token.id = user.id), (token.role = user.role)
+        token.active = user.active
+        token.seller = user.seller
+      }
+      return token
+    },
+    session: ({ session, user, token }) => {
+      console.log("Token:", token) // Log the token object to the console
+
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          role: token.role,
+          active: token.active,
+          seller: token.seller,
+        },
+      }
+    },
     async signIn({ profile }) {
       if (!profile?.email) {
         throw new Error("No email found")
