@@ -2,7 +2,7 @@ import { type USER_ROLE } from "@prisma/client"
 import type { LucideIcon } from "lucide-react"
 
 export type SessionUser = {
-  // id: string;
+  id: string
 } & {
   name?: string | null
   email?: string | null

@@ -3,8 +3,8 @@ import { redirect } from "next/navigation"
 import { AddStoreForm } from "~/components/forms/add-store-form"
 import { HeaderDescrip } from "~/components/header-descrip"
 import { authOptions } from "~/lib/auth"
-import { prisma } from "~/lib/db"
 import { getCurrentUser } from "~/lib/session"
+import { type SessionUser } from "~/types"
 
 export const metadata: Metadata = {
   title: "Add Store",
@@ -12,12 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function AddStorePage() {
-  //   const user = await getCurrentUser()
-  const user = await prisma.user.findUnique({
-    where: {
-      id: "1",
-    },
-  })
+  const user: SessionUser | undefined = await getCurrentUser()
 
   if (!user) {
     redirect(authOptions.pages?.signIn || "/api/auth/signin")

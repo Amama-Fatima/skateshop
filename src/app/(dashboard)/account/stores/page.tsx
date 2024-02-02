@@ -1,11 +1,12 @@
 import { type Metadata } from "next"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import type { User } from "@prisma/client"
 import { HeaderDescrip } from "~/components/header-descrip"
 import { Icons } from "~/components/icons"
 import { authOptions } from "~/lib/auth"
 import { prisma } from "~/lib/db"
+import { getCurrentUser } from "~/lib/session"
+import { type SessionUser } from "~/types"
 
 export const metadata: Metadata = {
   title: "Stores",
@@ -13,11 +14,7 @@ export const metadata: Metadata = {
 }
 
 export default async function StoresPage() {
-  const user: User | null = await prisma.user.findUnique({
-    where: {
-      email: "JohnDoes@gmail.com",
-    },
-  })
+  const user: SessionUser | undefined = await getCurrentUser()
 
   if (!user) {
     //TODO Understand this
