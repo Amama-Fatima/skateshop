@@ -18,7 +18,7 @@ export default async function AddStorePage() {
   }
 
   return (
-    <section className="container grid w-full items-center gap-6 pb-8 pt-6 md:py-10">
+    <section className="container grid w-full items-center gap-10 pb-10 pt-6 md:py-10">
       <HeaderDescrip title="Add Product" description="Add a new product." />
       <AddStoreForm userId={user.id} />
     </section>

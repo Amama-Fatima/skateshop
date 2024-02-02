@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
-import { revalidateTag } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { HeaderDescrip } from "~/components/header-descrip"
 import { Icons } from "~/components/icons"
 import { Button, buttonVariants } from "~/components/ui/button"
@@ -42,6 +42,19 @@ export default async function EditStorePage({ params }: EditStorePageProps) {
     const name = fd.get("name") as string
     const description = fd.get("description") as string
 
+    const storeWithSameName = await prisma.store.findFirst({
+      where: {
+        name,
+        id: {
+          not: storeId,
+        },
+      },
+    })
+
+    if (storeWithSameName) {
+      throw new Error("A store with the same name already exists.")
+    }
+
     await prisma.store.update({
       where: {
         id: storeId,
@@ -56,12 +69,26 @@ export default async function EditStorePage({ params }: EditStorePageProps) {
     revalidateTag(tag)
   }
 
+  async function deleteStore() {
+    "use server"
+
+    await prisma.store.delete({
+      where: {
+        id: storeId,
+      },
+    })
+
+    const path = "/account/stores"
+    revalidatePath(path)
+    redirect(path)
+  }
+
   if (!store) {
     return notFound()
   }
 
   return (
-    <section className="container grid w-full items-center space-y-10 pb-8 pt-6 md:py-10">
+    <section className="container grid w-full items-center gap-10 pb-10 pt-6 md:py-10">
       <HeaderDescrip
         title={store.name}
         description={store.description ?? "Manage your store"}
@@ -104,7 +131,10 @@ export default async function EditStorePage({ params }: EditStorePageProps) {
             id="name"
             type="text"
             name="name"
-            placeholder="Name"
+            placeholder="Type store name here..."
+            required
+            minLength={30}
+            maxLength={50}
             defaultValue={store.name}
           />
         </fieldset>
@@ -113,11 +143,20 @@ export default async function EditStorePage({ params }: EditStorePageProps) {
           <Textarea
             id="description"
             name="description"
-            placeholder="Description"
+            minLength={3}
+            maxLength={255}
+            placeholder="Type store description here."
             defaultValue={store.description ?? ""}
           />
         </fieldset>
-        {/* <LoadingButton>Update Store</LoadingButton> */}
+        {/* <LoadingButton type="submit">Update Store</LoadingButton> */}
+        {/* <LoadingButton variant="destructive" formAction={deleteStore}>
+          Update Store
+        </LoadingButton> */}
+        <Button variant={"destructive"} onClick={deleteStore}>
+          Delete Store
+        </Button>
+
         <Button type="submit">Update Store</Button>
       </form>
     </section>

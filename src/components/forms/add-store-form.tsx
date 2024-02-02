@@ -68,7 +68,7 @@ export function AddStoreForm({ userId }: AddStoreFormProps) {
         <Textarea
           id="description"
           placeholder="Type store description here..."
-          {...register("description", { required: true })}
+          {...register("description")}
           disabled={isLoading}
         />
         {formState.errors.description && (
