@@ -25,6 +25,7 @@ model Account {
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   
     @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
 
@@ -35,6 +36,7 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    @@index([userId])
 }
 model User {
     id            String    @id @default(cuid())
@@ -78,6 +80,8 @@ model Store{
   user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
   products      Product[]
+  @@index([userId])
+
 
 
 }
@@ -87,7 +91,7 @@ model Product{
   name          String
   description   String? @db.Text
   price         Int
-  image         String?
+  image         Image[]
   catergory     PRODUCT_CATEGORY @default(SKATEBOARD)
   quantity      Int     @default(1)
   inventory     Int     @default(1)
@@ -96,7 +100,22 @@ model Product{
   updatedAt     DateTime @updatedAt
   store         Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
   storeId       String
+  @@index([storeId])
 }
+
+
+model Image {
+  id        String @id @default(cuid())
+  name      String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+  @@index([productId])
+
+}
+
 
 enum PRODUCT_CATEGORY{
   SKATEBOARD

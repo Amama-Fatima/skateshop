@@ -65,8 +65,7 @@ export default async function EditStorePage({ params }: EditStorePageProps) {
       },
     })
 
-    const tag = `store:${storeId}`
-    revalidateTag(tag)
+    revalidateTag(storeId)
   }
 
   async function deleteStore() {
@@ -93,7 +92,7 @@ export default async function EditStorePage({ params }: EditStorePageProps) {
         title={store.name}
         description={store.description ?? "Manage your store"}
       />
-      <div className="flex items-center gap-2.5">
+      <div className="flex flex-col items-center justify-center gap-2.5 sm:flex-row">
         <Link href={`/account/stores/${storeId}`}>
           <div
             className={cn(
@@ -126,9 +125,9 @@ export default async function EditStorePage({ params }: EditStorePageProps) {
       {/* updateStore has error. need to solve this */}
       <form action={updateStore} className="mx-auto grid w-full max-w-xl gap-5">
         <fieldset className="grid gap-2.5">
-          <Label htmlFor="name">Name</Label>
+          <Label htmlFor="update-store-name">Name</Label>
           <Input
-            id="name"
+            id="update-store-name"
             type="text"
             name="name"
             placeholder="Type store name here..."
@@ -139,9 +138,9 @@ export default async function EditStorePage({ params }: EditStorePageProps) {
           />
         </fieldset>
         <fieldset className="grid gap-2.5">
-          <Label htmlFor="description">Description</Label>
+          <Label htmlFor="update-store-description">Description</Label>
           <Textarea
-            id="description"
+            id="update-store-description"
             name="description"
             minLength={3}
             maxLength={255}
@@ -153,11 +152,13 @@ export default async function EditStorePage({ params }: EditStorePageProps) {
         {/* <LoadingButton variant="destructive" formAction={deleteStore}>
           Update Store
         </LoadingButton> */}
-        <Button variant={"destructive"} onClick={deleteStore}>
-          Delete Store
+        <Button type="submit">
+          Update Store
+          <span className="sr-only">Update Store</span>
         </Button>
-
-        <Button type="submit">Update Store</Button>
+        <Button variant={"destructive"} onClick={deleteStore}>
+          Delete Store <span className="sr-only">Delete Store</span>
+        </Button>
       </form>
     </section>
   )
