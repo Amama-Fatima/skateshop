@@ -1,5 +1,6 @@
 import { type USER_ROLE } from "@prisma/client"
 import type { LucideIcon } from "lucide-react"
+import { FileWithPath } from "react-dropzone"
 
 export type SessionUser = {
   id: string
@@ -19,4 +20,14 @@ export interface NavItem {
   icon?: LucideIcon
   disabled?: boolean
   external?: boolean
+}
+
+export interface FileWithPreview extends File {
+  preview: string
+}
+
+export type FullFileWithPreview = {
+  file: FileWithPath
+  preview: string
+  content: string
 }

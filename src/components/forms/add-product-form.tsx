@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { PRODUCT_CATEGORY } from "@prisma/client"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
 import { addProductAction } from "~/lib/actions"
@@ -9,7 +10,9 @@ import { useForm, type SubmitHandler } from "react-hook-form"
 import { useZact } from "zact/client"
 import { type z } from "zod"
 
+import { FileDialog } from "../file-dialog"
 import { Icons } from "../icons"
+import SelectInput from "../select-input"
 import { Button } from "../ui/button"
 import { Textarea } from "../ui/textarea"
 
@@ -22,7 +25,7 @@ type Inputs = z.infer<typeof addProductSchema>
 export function AddProductForm({ storeId }: AddProductFormProps) {
   // react-hook-form
   const { mutate, isLoading } = useZact(addProductAction)
-  const { register, handleSubmit, formState, control, setValue, watch, reset } =
+  const { register, handleSubmit, formState, control, setValue, reset } =
     useForm<Inputs>({
       resolver: zodResolver(addProductSchema),
     })
@@ -45,7 +48,7 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
           type="text"
           placeholder="Type product name here."
           {...register("name", { required: true })}
-          disabled={isLoading}
+          // disabled={isLoading}
         />
         {formState.errors.name && (
           <p className="text-sm text-red-500 dark:text-red-500">
@@ -59,7 +62,7 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
           id="add-product-description"
           placeholder="Type product description here."
           {...register("description", { required: true })}
-          disabled={isLoading}
+          // disabled={isLoading}
         />
         {formState.errors.description && (
           <p className="text-sm text-red-500 dark:text-red-500">
@@ -67,14 +70,20 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
           </p>
         )}
       </fieldset>
-      <div className="flex flex-col items-center gap-2.5 sm:flex-row">
+      <div className="flex flex-col items-start gap-2.5 sm:flex-row">
         <fieldset className="grid gap-2.5">
           <Label htmlFor="add-product-category">Category</Label>
-          <select
-            id="add-product-category"
-            {...register("category", { required: true })}
-            disabled={isLoading}
+          <SelectInput
+            control={control}
+            name="category"
+            placeholder="Select a category"
+            options={Object.values(PRODUCT_CATEGORY)}
           />
+          {formState.errors.description && (
+            <p className="text-sm text-red-500 dark:text-red-500">
+              {formState.errors.description.message}
+            </p>
+          )}
         </fieldset>
         <fieldset className="grid gap-2.5">
           <Label htmlFor="add-product-price">Price</Label>
@@ -83,7 +92,7 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
             type="number"
             placeholder="Type product price here."
             {...register("price", { required: true, valueAsNumber: true })}
-            disabled={isLoading}
+            // disabled={isLoading}
           />
           {formState.errors.price && (
             <p className="text-sm text-red-500 dark:text-red-500">
@@ -92,7 +101,7 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
           )}
         </fieldset>
       </div>
-      <div className="flex flex-col items-center gap-2.5 sm:flex-row">
+      <div className="flex flex-col items-start gap-2.5 sm:flex-row">
         <fieldset className="grid w-full gap-2.5">
           <Label htmlFor="add-product-quantity">Quantity</Label>
           <Input
@@ -100,7 +109,7 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
             type="number"
             placeholder="Type product quantity here."
             {...register("quantity", { required: true, valueAsNumber: true })}
-            disabled={isLoading}
+            // disabled={isLoading}
           />
           {formState.errors.quantity && (
             <p className="text-sm text-red-500 dark:text-red-500">
@@ -115,7 +124,7 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
             type="number"
             placeholder="Type product inventory here."
             {...register("inventory", { required: true, valueAsNumber: true })}
-            disabled={isLoading}
+            // disabled={isLoading}
           />
           {formState.errors.inventory && (
             <p className="text-sm text-red-500 dark:text-red-500">
@@ -124,6 +133,20 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
           )}
         </fieldset>
       </div>
+      <fieldset>
+        <Label htmlFor="add-product-images">Images (optional)</Label>
+        <FileDialog
+          setValue={setValue}
+          name="image"
+          maxFiles={3}
+          maxSize={1024 * 1024 * 8}
+        />
+        {formState.errors.image && (
+          <p className="text-sm text-red-500 dark:text-red-500">
+            {formState.errors.image.message}
+          </p>
+        )}
+      </fieldset>
       <Button disabled={isLoading}>
         {isLoading && (
           <Icons.spinner
