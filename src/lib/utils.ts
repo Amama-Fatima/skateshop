@@ -7,12 +7,12 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatEnum(value: string) {
-  console.log("Your enum is ", value)
+  // console.log("Your enum is ", value)
   return value
-  // return value
-  //   .split("_")
-  //   .map((word) => (word[0] as string) + word.slice(1).toLowerCase())
-  //   .join(" ")
+  return value
+    .split("_")
+    .map((word) => (word[0] as string) + word.slice(1).toLowerCase())
+    .join(" ")
 }
 
 export function formatPrice(price: number) {
@@ -24,4 +24,11 @@ export function formatPrice(price: number) {
 
 export function formatDate(date: Date) {
   return dayjs(date).format("MMMM D, YYYY")
+}
+
+export function bytesToSize(bytes: number) {
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
+  if (bytes === 0) return "0 Byte"
+  const i = Math.floor(Math.log(bytes) / Math.log(1024))
+  return `${Math.round(bytes / Math.pow(1024, i))} ${sizes[i] ?? "Bytes"}`
 }

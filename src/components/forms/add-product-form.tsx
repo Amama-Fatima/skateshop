@@ -30,9 +30,7 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
       resolver: zodResolver(addProductSchema),
     })
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data)
-
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
     // reset()
   }
 
@@ -141,9 +139,9 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
           maxFiles={3}
           maxSize={1024 * 1024 * 8}
         />
-        {formState.errors.image && (
+        {(formState.errors.image as { message: string }) && (
           <p className="text-sm text-red-500 dark:text-red-500">
-            {formState.errors.image.message}
+            {(formState.errors.image as { message: string }).message}
           </p>
         )}
       </fieldset>

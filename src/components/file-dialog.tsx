@@ -1,13 +1,13 @@
+import { start } from "repl"
 import * as React from "react"
 import Image from "next/image"
-import { OurFileRouter } from "~/app/api/uploadthing/core"
+import { generateReactHelpers } from "@uploadthing/react/hooks"
+import { type OurFileRouter } from "~/app/api/uploadthing/core"
 import { Icons } from "~/components/icons"
 import { Button } from "~/components/ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog"
 import { cn } from "~/lib/utils"
 import { type FileWithPreview } from "~/types"
-import { UploadCloud } from "lucide-react"
-// import { generateReactHelpers } from "@uploadthing/react"
 import {
   useDropzone,
   type Accept,
@@ -33,7 +33,7 @@ export interface FileDialogProps<TFieldValues extends FieldValues>
   disabled?: boolean
 }
 
-// const {useUploadThing} = generateReactHelpers<OurFileRouter>()
+const { useUploadThing } = generateReactHelpers<OurFileRouter>()
 
 export function FileDialog<TFieldValues extends FieldValues>({
   name,
@@ -49,9 +49,11 @@ export function FileDialog<TFieldValues extends FieldValues>({
   ...props
 }: FileDialogProps<TFieldValues>) {
   const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
+  const [isDisabled, setIsDisabled] = React.useState(disabled ?? false)
 
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+      console.log("ondrop")
       setFiles((prev) => [
         ...(prev ?? []),
         ...acceptedFiles.map((file) =>
@@ -62,15 +64,20 @@ export function FileDialog<TFieldValues extends FieldValues>({
       ])
 
       acceptedFiles.forEach((file) => {
-        if (!file) return
+        if (!file) {
+          return
+        }
         setValue(name, file as PathValue<TFieldValues, Path<TFieldValues>>, {
           shouldValidate: true,
         })
+        console.log("file", file)
       })
+
       rejectedFiles.forEach((file) => {
         setValue(name, null as PathValue<TFieldValues, Path<TFieldValues>>, {
           shouldValidate: true,
         })
+
         switch (file.errors[0]?.code as ErrorCode) {
           case "file-invalid-type":
             toast.error("File type not supported")
@@ -92,8 +99,20 @@ export function FileDialog<TFieldValues extends FieldValues>({
         }
       })
     },
-    [maxSize, name, setValue]
+    [maxSize, name, setValue, files]
   )
+
+  const { startUpload } = useUploadThing("productImage", {
+    onClientUploadComplete: () => {
+      alert("uploaded successfully")
+    },
+    onUploadError: () => {
+      alert("upload failed")
+    },
+    onUploadBegin: () => {
+      alert("upload started")
+    },
+  })
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -110,6 +129,13 @@ export function FileDialog<TFieldValues extends FieldValues>({
     })
   }, [files])
 
+  //disable when maxfiles reached
+  React.useEffect(() => {
+    if (files && files.length >= maxFiles) {
+      setIsDisabled(true)
+    }
+  }, [files?.length, maxFiles])
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -122,15 +148,21 @@ export function FileDialog<TFieldValues extends FieldValues>({
         <div
           {...getRootProps()}
           className={cn(
-            "group relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed border-muted-foreground/25 px-5 py-2.5 text-center transition hover:bg-muted/25",
+            "group relative grid h-48 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed border-muted-foreground/25 px-5 py-2.5 text-center transition hover:bg-muted/25",
             "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             isDragActive && "border-muted-foreground/50",
-            disabled && "pointer-events-none opacity-60",
+            isDisabled && "pointer-events-none opacity-60",
             className
           )}
           {...props}
         >
-          <input {...getInputProps()} />
+          <input
+            {...getInputProps()}
+            className="absolute inset-0 z-10 size-full overflow-hidden opacity-0"
+            style={{
+              display: "block",
+            }}
+          />
           {isUploading ? (
             <div className="group grid w-full place-items-center gap-1 sm:px-10">
               <Icons.upload
@@ -146,8 +178,20 @@ export function FileDialog<TFieldValues extends FieldValues>({
               />
               <p className="text-base font-medium">Drop files here</p>
             </div>
+          ) : isDisabled ? (
+            <div className="grid place-items-center gap-1 sm:px-5">
+              <Icons.warning
+                className="size-9 text-destructive"
+                aria-hidden="true"
+              />
+              <p className="mt-2 text-base font-medium text-muted-foreground">
+                You have reached the maximum number of files
+              </p>
+              <p className="text-sm text-slate-500">
+                Please remove some files to upload more
+              </p>
+            </div>
           ) : (
-            //  className="grid place-items-center gap-1 sm:px-5"
             <div className="grid place-items-center gap-1 sm:px-5">
               <Icons.upload
                 className="size-9 text-muted-foreground"
@@ -175,12 +219,13 @@ export function FileDialog<TFieldValues extends FieldValues>({
               >
                 <div className="flex items-center gap-2">
                   <Image
-                    src={`/${file.name}`}
-                    alt={file.name}
+                    src={file.preview}
+                    alt="preview"
                     className="size-10 shrink-0 rounded-md"
                     width={40}
                     height={40}
                     loading="lazy"
+                    unoptimized={false}
                   />
                   <div className="flex flex-col">
                     <p className="line-clamp-1 text-sm font-medium text-muted-foreground">
@@ -222,6 +267,18 @@ export function FileDialog<TFieldValues extends FieldValues>({
                 </Button>
               </div>
             ))}
+            <Button onClick={() => void startUpload(files)}>
+              {isUploading ? (
+                <Icons.spinner
+                  className="mr-2 size-4 animate-spin"
+                  aria-hidden="true"
+                />
+              ) : (
+                <Icons.upload className="mr-2 size-4" aria-hidden="true" />
+              )}
+              Upload
+              <span className="sr-only">Upload</span>
+            </Button>
           </div>
         )}
       </DialogContent>

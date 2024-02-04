@@ -33,6 +33,7 @@ const config = {
   reactStrictMode: true,
   images: {
     domains: ["lh3.googleusercontent.com"],
+    remotePatterns: [{ hostname: "*" }],
   },
   experimental: {
     serverActions: true,
