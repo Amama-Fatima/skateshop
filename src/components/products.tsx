@@ -39,7 +39,7 @@ export function Products({ storeId }: ProductsProps) {
         cell: ({ cell }) => {
           // console.log("cell.getValue()", cell.getValue())
           //nth is renderingin this cell
-          formatEnum(cell.getValue() as PRODUCT_CATEGORY)
+          cell.getValue() as PRODUCT_CATEGORY
         },
       },
       {

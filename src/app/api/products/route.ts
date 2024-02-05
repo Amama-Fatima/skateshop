@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       return new Response("Unauthorized", { status: 403 })
     }
 
-    const { user } = session
+    // const { user } = session
 
     const input = getProductsSchema.parse(await req.json())
 

@@ -7,8 +7,8 @@ import { z } from "zod"
 
 export async function POST(req: NextRequest) {
   try {
-    const input = filterProductSchema.parse(req.body)
-
+    const input = filterProductSchema.parse(await req.json())
+    console.log("Your input", input)
     const products = await prisma.product.findMany({
       where: {
         name: {
@@ -24,14 +24,19 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    console.log("Your products", products)
+
     const groupedProducts = Object.values(PRODUCT_CATEGORY).map((category) => ({
       category,
       products: products.filter((product) => product.catergory === category),
     })) satisfies GroupedProduct<Pick<Product, "id" | "name">>[]
 
+    console.log("Your grouped products", groupedProducts)
+
     return new Response(JSON.stringify(groupedProducts), { status: 200 })
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
+      console.log("Your error", error)
       return new Response(JSON.stringify(error.issues), { status: 422 })
     } else if (error instanceof Error) {
       return new Response(error.message, { status: 500 })
