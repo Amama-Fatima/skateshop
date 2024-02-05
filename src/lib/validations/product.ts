@@ -23,3 +23,7 @@ export const addProductSchema = z.object({
     message: "Must be a positive number",
   }),
 })
+
+export const filterProductSchema = z.object({
+  query: z.string(),
+})

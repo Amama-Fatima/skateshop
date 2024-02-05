@@ -7,8 +7,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatEnum(value: string) {
-  // console.log("Your enum is ", value)
-  return value
   return value
     .split("_")
     .map((word) => (word[0] as string) + word.slice(1).toLowerCase())

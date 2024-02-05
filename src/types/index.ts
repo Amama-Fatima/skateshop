@@ -1,6 +1,5 @@
-import { type USER_ROLE } from "@prisma/client"
+import { PRODUCT_CATEGORY, type USER_ROLE } from "@prisma/client"
 import type { LucideIcon } from "lucide-react"
-import type { FileWithPath } from "react-dropzone"
 
 export type SessionUser = {
   id: string
@@ -26,21 +25,15 @@ export interface FileWithPreview extends File {
   preview: string
 }
 
-export type FullFileWithPreview = {
-  file: FileWithPath
-  preview: string
-  content: string
-}
-
-export type FullFile = {
-  file: FileWithPath
-  content: string
-}
-
 export type UploadThingOuput = {
   name: string
   size: number
   key: string
   serverData: null
   url: string
+}
+
+export type GroupedProduct<TData extends object> = {
+  category: PRODUCT_CATEGORY
+  products: TData[]
 }

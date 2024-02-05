@@ -21,15 +21,15 @@ interface MainNavProps {
 
 const MainNav = ({ items }: MainNavProps) => {
   return (
-    <div className="flex gap-6 md:gap-10">
-      <Link href="/" className="hidden items-center space-x-2 md:flex">
+    <div className="flex gap-6 lg:gap-10">
+      <Link href="/" className="hidden items-center space-x-2 lg:flex">
         <Icons.logo className="size-8" />
         <span className="hidden font-bold sm:inline-block">
           {siteConfig.name}
         </span>
       </Link>
       {items?.length ? (
-        <nav className="hidden gap-6 md:flex">
+        <nav className="hidden gap-6 lg:flex">
           {items?.map(
             (item, index) =>
               item.href && (
@@ -51,7 +51,7 @@ const MainNav = ({ items }: MainNavProps) => {
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="-ml-4 text-base hover:bg-transparent focus:ring-0 md:hidden"
+            className="-ml-4 text-base hover:bg-transparent focus:ring-0 lg:hidden"
           >
             <span>Menu</span>
           </Button>
