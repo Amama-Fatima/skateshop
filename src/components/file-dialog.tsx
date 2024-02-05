@@ -114,7 +114,7 @@ export function FileDialog<TFieldValues extends FieldValues>({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" disabled={isDisabled}>
           Upload Images
           <span className="sr-only">Upload Images</span>
         </Button>

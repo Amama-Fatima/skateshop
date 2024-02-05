@@ -1,43 +1,25 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
 import { prisma } from "~/lib/db"
 import { addProductSchema } from "~/lib/validations/product"
-import { addStoreSchema } from "~/lib/validations/store"
 import { zact } from "zact/server"
 import { z } from "zod"
 
-export const addStoreAction = zact(
-  z.object({
-    ...addStoreSchema.shape,
-    userId: z.string(),
-  })
-)(async (input) => {
-  const storeWithSameName = await prisma.store.findFirst({
+export async function checkProductNameAction(fd: FormData) {
+  const pName = fd.get("name") as string
+
+  const productWithSameName = await prisma.product.findFirst({
     where: {
-      name: input.name,
+      name: pName,
     },
   })
 
-  if (storeWithSameName) {
-    throw new Error("Store with same name already exists")
+  if (productWithSameName) {
+    return {
+      error: "Product with same name already exists",
+    }
   }
-
-  await prisma.store.create({
-    data: {
-      name: input.name,
-      description: input.description,
-      user: {
-        connect: {
-          id: input.userId,
-        },
-      },
-    },
-  })
-
-  const path = "/account/stores"
-  revalidatePath(path)
-})
+}
 
 export const addProductAction = zact(
   z.object({

@@ -2,14 +2,9 @@ import type { NextRequest } from "next/server"
 import type { Prisma } from "@prisma/client"
 import { authOptions } from "~/lib/auth"
 import { prisma } from "~/lib/db"
+import { getProductsSchema } from "~/lib/validations/product"
 import { getServerSession } from "next-auth"
 import * as z from "zod"
-
-const getProductsSchema = z.object({
-  storeId: z.string(),
-  page: z.number().int().default(0),
-  perPage: z.number().int().default(10),
-})
 
 export async function POST(req: NextRequest) {
   try {
