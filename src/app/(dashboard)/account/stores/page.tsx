@@ -36,9 +36,6 @@ export default async function StoresPage() {
       },
     },
   })
-  // console.log("Stores", stores)
-
-  //container grid items-center gap-6 space-y-5 pb-20 pt-6 md:py-10
   return (
     <section className="container grid w-full items-center gap-10 pb-10 pt-6 md:py-10">
       <HeaderDescrip

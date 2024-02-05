@@ -8,9 +8,6 @@ interface LofiLayoutProps {
 
 export default async function LofiLayout({ children }: LofiLayoutProps) {
   const user = await getCurrentUser()
-  // console.log("User in lobby layout: ", user)
-
-  //get the user from the database
 
   return (
     <div>
@@ -26,8 +23,3 @@ export default async function LofiLayout({ children }: LofiLayoutProps) {
     </div>
   )
 }
-// const user= {
-//     name: "Chad",
-//     image: "https://pbs.twimg.com/profile_images/1364491704816005632/4iY6yMgX_400x400.jpg",
-//     email: "jjj"
-//   }

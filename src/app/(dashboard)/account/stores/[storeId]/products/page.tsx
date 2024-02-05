@@ -1,14 +1,11 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import { HeaderDescrip } from "~/components/header-descrip"
 import { Icons } from "~/components/icons"
 import { Products } from "~/components/products"
 import { buttonVariants } from "~/components/ui/button"
-import { Skeleton } from "~/components/ui/skeleton"
-import { authOptions } from "~/lib/auth"
 import { prisma } from "~/lib/db"
-import { getCurrentUser } from "~/lib/session"
 import { cn } from "~/lib/utils"
 
 export const metadata: Metadata = {

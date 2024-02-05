@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import { AddProductForm } from "~/components/forms/add-product-form"
-import { AddStoreForm } from "~/components/forms/add-store-form"
 import { HeaderDescrip } from "~/components/header-descrip"
 import { authOptions } from "~/lib/auth"
 import { prisma } from "~/lib/db"

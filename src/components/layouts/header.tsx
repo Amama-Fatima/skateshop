@@ -1,14 +1,11 @@
 "use client"
 
 import React from "react"
-import Link from "next/link" //
-
-import { useRouter } from "next/navigation"
-import { Icons } from "~/components/icons" //
-import MainNav from "~/components/layouts/main-nav" //
-
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar" //
-import { Button } from "~/components/ui/button" //
+import Link from "next/link"
+import { Icons } from "~/components/icons"
+import MainNav from "~/components/layouts/main-nav"
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
+import { Button } from "~/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
-import { siteConfig } from "~/config/site" //
-
-import { SessionUser } from "~/types" //
-import { signIn, signOut } from "next-auth/react" //
+import { siteConfig } from "~/config/site"
+import { type SessionUser } from "~/types"
+import { signIn, signOut } from "next-auth/react"
 
 import { Combobox } from "../combobox"
 
@@ -28,8 +24,6 @@ interface SiteHeaderProps {
 }
 
 export default function Header({ user }: SiteHeaderProps): JSX.Element {
-  const router = useRouter()
-
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">

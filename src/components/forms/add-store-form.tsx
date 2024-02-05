@@ -22,8 +22,6 @@ interface AddStoreFormProps {
 type Inputs = z.infer<typeof addStoreSchema>
 
 export function AddStoreForm({ userId }: AddStoreFormProps) {
-  console.log(userId)
-
   const router = useRouter()
   const { mutate, isLoading } = useZact(addStoreAction)
 
@@ -40,7 +38,6 @@ export function AddStoreForm({ userId }: AddStoreFormProps) {
     })
 
     router.push("/account/stores")
-    // router.refresh()
   }
 
   return (

@@ -10,7 +10,6 @@ export default async function DashBoardLayout({
   children,
 }: DashBoardLayoutProps) {
   const user = await getCurrentUser()
-  // console.log("User in dashboard layout: ", user)
 
   return (
     <div className="relative flex min-h-screen flex-col">

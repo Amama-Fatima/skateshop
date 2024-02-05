@@ -1,10 +1,6 @@
 import { type USER_ROLE } from "@prisma/client"
 import type { LucideIcon } from "lucide-react"
-import type {
-  DropzoneInputProps,
-  DropzoneRootProps,
-  FileWithPath,
-} from "react-dropzone"
+import type { FileWithPath } from "react-dropzone"
 
 export type SessionUser = {
   id: string
@@ -39,11 +35,6 @@ export type FullFileWithPreview = {
 export type FullFile = {
   file: FileWithPath
   content: string
-}
-
-export type UploadThingProps = {
-  readonly files: FullFile[]
-  readonly startUpload: () => Promise<any>
 }
 
 export type UploadThingOuput = {
