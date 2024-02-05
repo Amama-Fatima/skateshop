@@ -36,6 +36,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
   })
 
   if (!store) {
+    console.log("Store not found")
     notFound()
   }
 

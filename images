@@ -1,0 +1,14 @@
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "postgres", schema "public" at "localhost:5432"
+
+Already in sync, no schema change or pending migration was found.
+
+Running generate... (Use --skip-generate to skip the generators)
+[2K[1A[2K[GRunning generate... - Prisma Client
+[2K[1A[2K[GEPERM: operation not permitted, unlink 'C:\Users\AMAMA\OneDrive - Higher Educati
+on 
+Commission\Documents\Documents\work\skateboard\node_modules\.pnpm\@prisma+client
+@4.16.2_prisma@4.16.2\node_modules\.prisma\client\query_engine-windows.dll.node'
+
+

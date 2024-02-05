@@ -1,12 +1,18 @@
 "use client"
 
+import React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { PRODUCT_CATEGORY } from "@prisma/client"
+import { generateReactHelpers } from "@uploadthing/react/hooks"
+import { type OurFileRouter } from "~/app/api/uploadthing/core"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
 import { addProductAction } from "~/lib/actions"
 import { addProductSchema } from "~/lib/validations/product"
+import { useImageStore } from "~/stores/images"
+import { type UploadThingOuput } from "~/types"
 import { useForm, type SubmitHandler } from "react-hook-form"
+import toast from "react-hot-toast"
 import { useZact } from "zact/client"
 import { type z } from "zod"
 
@@ -22,16 +28,64 @@ interface AddProductFormProps {
 
 type Inputs = z.infer<typeof addProductSchema>
 
+const { useUploadThing } = generateReactHelpers<OurFileRouter>()
+
 export function AddProductForm({ storeId }: AddProductFormProps) {
+  const [isLoading, setIsLoading] = React.useState(false)
+  const { images, clearImages } = useImageStore()
+
   // react-hook-form
-  const { mutate, isLoading } = useZact(addProductAction)
-  const { register, handleSubmit, formState, control, setValue, reset } =
-    useForm<Inputs>({
+  const addProductMutation = useZact(addProductAction)
+  const { register, handleSubmit, formState, control, reset } = useForm<Inputs>(
+    {
       resolver: zodResolver(addProductSchema),
-    })
+    }
+  )
+
+  const { startUpload } = useUploadThing("productImage", {
+    onClientUploadComplete: () => {
+      alert("uploaded successfully")
+    },
+    onUploadError: (error: Error) => {
+      alert("upload failed " + error.message)
+    },
+    onUploadBegin: () => {
+      alert("upload started")
+    },
+  })
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    // reset()
+    console.log("data", data)
+    setIsLoading(true)
+    const rawImages = (await startUpload(images)) as UploadThingOuput[]
+
+    const databaseReadyImages = rawImages.map((image) => ({
+      id: image.key,
+      name: image.name,
+      url: image.url,
+    }))
+
+    setIsLoading(addProductMutation.isLoading)
+
+    await addProductMutation.mutate({
+      storeId,
+      name: data.name,
+      description: data.description,
+      category: data.category,
+      price: data.price,
+      quantity: data.quantity,
+      inventory: data.inventory,
+      image: databaseReadyImages,
+    })
+
+    addProductMutation.error
+      ? toast.error(addProductMutation.error.message)
+      : toast.success("Product added successfully")
+
+    setIsLoading(false)
+
+    reset()
+    clearImages()
   }
 
   return (
@@ -134,16 +188,12 @@ export function AddProductForm({ storeId }: AddProductFormProps) {
       <fieldset>
         <Label htmlFor="add-product-images">Images (optional)</Label>
         <FileDialog
-          setValue={setValue}
-          name="image"
+          // setValue={setValue}
+          // name="image"
           maxFiles={3}
           maxSize={1024 * 1024 * 8}
+          disabled={isLoading}
         />
-        {(formState.errors.image as { message: string }) && (
-          <p className="text-sm text-red-500 dark:text-red-500">
-            {(formState.errors.image as { message: string }).message}
-          </p>
-        )}
       </fieldset>
       <Button disabled={isLoading}>
         {isLoading && (

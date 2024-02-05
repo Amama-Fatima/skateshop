@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
     const { user } = session
 
     const input = getProductsSchema.parse(await req.json())
+
     const params: Prisma.ProductFindManyArgs = {
       where: {
         storeId: input.storeId,
@@ -36,6 +37,7 @@ export async function POST(req: NextRequest) {
         take: input.perPage,
       }),
     ])
+
     return new Response(
       JSON.stringify({
         count,

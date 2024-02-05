@@ -8,7 +8,7 @@ interface LofiLayoutProps {
 
 export default async function LofiLayout({ children }: LofiLayoutProps) {
   const user = await getCurrentUser()
-  console.log("User in lobby layout: ", user)
+  // console.log("User in lobby layout: ", user)
 
   //get the user from the database
 

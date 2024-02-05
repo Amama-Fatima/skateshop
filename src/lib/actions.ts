@@ -41,9 +41,15 @@ export const addStoreAction = zact(
 
 export const addProductAction = zact(
   z.object({
-    ...addProductSchema.omit({ image: true }).shape,
+    ...addProductSchema.shape,
     storeId: z.string(),
-    images: z.array(z.string()),
+    image: z.array(
+      z.object({
+        id: z.string(),
+        url: z.string(),
+        name: z.string(),
+      })
+    ),
   })
 )(async (input) => {
   const productWithSameName = await prisma.product.findFirst({
@@ -64,6 +70,11 @@ export const addProductAction = zact(
       price: input.price,
       quantity: input.quantity,
       inventory: input.inventory,
+      image: {
+        createMany: {
+          data: input.image,
+        },
+      },
       store: {
         connect: {
           id: input.storeId,

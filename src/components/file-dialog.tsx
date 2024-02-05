@@ -1,31 +1,23 @@
-import { start } from "repl"
 import * as React from "react"
 import Image from "next/image"
-import { generateReactHelpers } from "@uploadthing/react/hooks"
-import { type OurFileRouter } from "~/app/api/uploadthing/core"
 import { Icons } from "~/components/icons"
 import { Button } from "~/components/ui/button"
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog"
 import { cn } from "~/lib/utils"
-import { type FileWithPreview } from "~/types"
+import { useImageStore } from "~/stores/images"
 import {
   useDropzone,
   type Accept,
   type ErrorCode,
   type FileRejection,
 } from "react-dropzone"
-import type {
-  FieldValues,
-  Path,
-  PathValue,
-  UseFormSetValue,
-} from "react-hook-form"
+import type { FieldValues } from "react-hook-form"
 import { toast } from "react-hot-toast"
 
 export interface FileDialogProps<TFieldValues extends FieldValues>
   extends React.HTMLAttributes<HTMLDivElement> {
-  setValue: UseFormSetValue<TFieldValues>
-  name: Path<TFieldValues>
+  // setValue: UseFormSetValue<TFieldValues>
+  // name: Path<TFieldValues>
   accept?: Accept
   maxSize?: number
   maxFiles?: number
@@ -33,11 +25,9 @@ export interface FileDialogProps<TFieldValues extends FieldValues>
   disabled?: boolean
 }
 
-const { useUploadThing } = generateReactHelpers<OurFileRouter>()
-
 export function FileDialog<TFieldValues extends FieldValues>({
-  name,
-  setValue,
+  // name,
+  // setValue,
   accept = {
     "image/*": [],
   },
@@ -48,35 +38,33 @@ export function FileDialog<TFieldValues extends FieldValues>({
   className,
   ...props
 }: FileDialogProps<TFieldValues>) {
-  const [files, setFiles] = React.useState<FileWithPreview[] | null>(null)
   const [isDisabled, setIsDisabled] = React.useState(disabled ?? false)
+  const { images, addImage, removeImage } = useImageStore()
 
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       console.log("ondrop")
-      setFiles((prev) => [
-        ...(prev ?? []),
-        ...acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        ),
-      ])
+
+      acceptedFiles.forEach((file) => {
+        const fileWithPreview = Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+        addImage(fileWithPreview)
+      })
 
       acceptedFiles.forEach((file) => {
         if (!file) {
           return
         }
-        setValue(name, file as PathValue<TFieldValues, Path<TFieldValues>>, {
-          shouldValidate: true,
-        })
-        console.log("file", file)
+        // setValue(name, file as PathValue<TFieldValues, Path<TFieldValues>>, {
+        //   shouldValidate: true,
+        // })
       })
 
       rejectedFiles.forEach((file) => {
-        setValue(name, null as PathValue<TFieldValues, Path<TFieldValues>>, {
-          shouldValidate: true,
-        })
+        // setValue(name, null as PathValue<TFieldValues, Path<TFieldValues>>, {
+        //   shouldValidate: true,
+        // })
 
         switch (file.errors[0]?.code as ErrorCode) {
           case "file-invalid-type":
@@ -99,20 +87,8 @@ export function FileDialog<TFieldValues extends FieldValues>({
         }
       })
     },
-    [maxSize, name, setValue, files]
+    [maxSize, images]
   )
-
-  const { startUpload } = useUploadThing("productImage", {
-    onClientUploadComplete: () => {
-      alert("uploaded successfully")
-    },
-    onUploadError: () => {
-      alert("upload failed")
-    },
-    onUploadBegin: () => {
-      alert("upload started")
-    },
-  })
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -123,18 +99,17 @@ export function FileDialog<TFieldValues extends FieldValues>({
 
   //revoke object urls when component unmounts
   React.useEffect(() => {
-    if (!files) return
-    files.forEach((file) => {
-      URL.revokeObjectURL(file.preview)
+    images.forEach((image) => {
+      URL.revokeObjectURL(image.preview)
     })
-  }, [files])
+  }, [images])
 
   //disable when maxfiles reached
   React.useEffect(() => {
-    if (files && files.length >= maxFiles) {
+    if (images && images.length >= maxFiles) {
       setIsDisabled(true)
     }
-  }, [files?.length, maxFiles])
+  }, [images?.length, maxFiles])
 
   return (
     <Dialog>
@@ -210,16 +185,16 @@ export function FileDialog<TFieldValues extends FieldValues>({
         <p>
           You can upload up to {maxFiles} {maxFiles > 1 ? "files" : "file"}
         </p>
-        {files && (
+        {images && (
           <div className="mt-2 grid gap-5">
-            {files.map((file, i) => (
+            {images.map((image, i) => (
               <div
                 key={i}
                 className="relative flex items-center justify-between gap-2.5"
               >
                 <div className="flex items-center gap-2">
                   <Image
-                    src={file.preview}
+                    src={image.preview}
                     alt="preview"
                     className="size-10 shrink-0 rounded-md"
                     width={40}
@@ -229,10 +204,10 @@ export function FileDialog<TFieldValues extends FieldValues>({
                   />
                   <div className="flex flex-col">
                     <p className="line-clamp-1 text-sm font-medium text-muted-foreground">
-                      {file.name}
+                      {image.name}
                     </p>
                     <p className="text-xs text-slate-500">
-                      {Math.round(file.size / 1024)}KB
+                      {Math.round(image.size / 1024)}KB
                     </p>
                   </div>
                 </div>
@@ -242,21 +217,14 @@ export function FileDialog<TFieldValues extends FieldValues>({
                   size="sm"
                   className="size-7 p-0"
                   onClick={() => {
-                    setFiles((prev) => {
-                      if (!prev) return null
-                      const newFiles = prev.filter(
-                        (prevFile) => prevFile.name !== file.name
-                      )
-                      if (newFiles.length === 0) return null
-                      return newFiles
-                    })
-                    setValue(
-                      name,
-                      null as PathValue<TFieldValues, Path<TFieldValues>>,
-                      {
-                        shouldValidate: true,
-                      }
-                    )
+                    removeImage(i)
+                    // setValue(
+                    //   name,
+                    //   null as PathValue<TFieldValues, Path<TFieldValues>>,
+                    //   {
+                    //     shouldValidate: true,
+                    //   }
+                    // )
                   }}
                 >
                   <Icons.close
@@ -267,18 +235,6 @@ export function FileDialog<TFieldValues extends FieldValues>({
                 </Button>
               </div>
             ))}
-            <Button onClick={() => void startUpload(files)}>
-              {isUploading ? (
-                <Icons.spinner
-                  className="mr-2 size-4 animate-spin"
-                  aria-hidden="true"
-                />
-              ) : (
-                <Icons.upload className="mr-2 size-4" aria-hidden="true" />
-              )}
-              Upload
-              <span className="sr-only">Upload</span>
-            </Button>
           </div>
         )}
       </DialogContent>

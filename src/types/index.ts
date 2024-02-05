@@ -42,14 +42,14 @@ export type FullFile = {
 }
 
 export type UploadThingProps = {
-  readonly getRootProps: <T extends DropzoneRootProps>(
-    props?: T | undefined
-  ) => T
-  readonly getInputProps: <T_1 extends DropzoneInputProps>(
-    props?: T_1 | undefined
-  ) => T_1
-  readonly isDragActive: boolean
   readonly files: FullFile[]
-  readonly resetFiles: () => void
   readonly startUpload: () => Promise<any>
+}
+
+export type UploadThingOuput = {
+  name: string
+  size: number
+  key: string
+  serverData: null
+  url: string
 }
