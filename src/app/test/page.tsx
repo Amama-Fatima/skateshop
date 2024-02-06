@@ -1,12 +1,8 @@
 import React from "react"
-import { Combobox } from "~/components/combobox"
+import ProductsTable from "~/components/products-table"
 
 const page = () => {
-  return (
-    <div>
-      <Combobox />
-    </div>
-  )
+  return <div>{/* <ProductsTable /> */}</div>
 }
 
 export default page

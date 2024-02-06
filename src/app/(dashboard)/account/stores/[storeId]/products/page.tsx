@@ -1,12 +1,15 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { type Product } from "@prisma/client"
 import { HeaderDescrip } from "~/components/header-descrip"
 import { Icons } from "~/components/icons"
 import { Products } from "~/components/products"
+// import ProductsTable from "~/components/products-table"
 import { buttonVariants } from "~/components/ui/button"
 import { prisma } from "~/lib/db"
 import { cn } from "~/lib/utils"
+import { type SortDirection } from "~/types"
 
 export const metadata: Metadata = {
   title: "Products",
@@ -17,10 +20,22 @@ interface ProductsPageProps {
   params: {
     storeId: string
   }
+  searchParams: {
+    page?: string
+    items?: string
+    sort?: keyof Product
+    order?: SortDirection
+    query?: string
+  }
 }
 
-export default async function ProductsPage({ params }: ProductsPageProps) {
+export default async function ProductsPage({
+  params,
+  searchParams,
+}: ProductsPageProps) {
   const { storeId } = params
+
+  const { page, items, sort, order, query } = searchParams
 
   const store = await prisma.store.findUnique({
     where: {
@@ -31,6 +46,28 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
       name: true,
     },
   })
+
+  //number of items to show per page
+  const limit = items ? parseInt(items) : 10
+
+  //number of items to skip
+  const offset = page ? (parseInt(page) - 1) * limit : 1
+
+  const [products, totalproducts] = await prisma.$transaction([
+    prisma.product.findMany({
+      take: query ? undefined : limit,
+      skip: query ? undefined : offset,
+      where: {
+        storeId,
+        name: query ? { contains: query, mode: "insensitive" } : undefined,
+      },
+
+      orderBy: sort ? { [sort]: order ?? "asc" } : undefined,
+    }),
+    prisma.product.count(),
+  ])
+
+  const pageCount = Math.ceil(totalproducts / limit)
 
   if (!store) {
     console.log("Store not found")
@@ -57,7 +94,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
           </div>
         </Link>
         <Link
-          href={`account/stores/${storeId}/products`}
+          href={`/account/stores/${storeId}/products`}
           className="w-full sm:w-fit"
         >
           <div
@@ -76,6 +113,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
         </Link>
       </div>
       <Products storeId={storeId} />
+      {/* <ProductsTable data={products} pageCount={pageCount} /> */}
     </section>
   )
 }

@@ -37,7 +37,7 @@ export function Products({ storeId }: ProductsProps) {
         accessorKey: "category",
         header: "Category",
         cell: ({ cell }) => {
-          // console.log("cell.getValue()", cell.getValue())
+          console.log("cell.getValue()", cell.getValue())
           //nth is renderingin this cell
           cell.getValue() as PRODUCT_CATEGORY
         },

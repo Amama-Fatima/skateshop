@@ -1,4 +1,4 @@
-import { PRODUCT_CATEGORY, type USER_ROLE } from "@prisma/client"
+import { type PRODUCT_CATEGORY, type USER_ROLE } from "@prisma/client"
 import type { LucideIcon } from "lucide-react"
 
 export type SessionUser = {
@@ -37,3 +37,5 @@ export type ProductsByCategory<TData extends object> = {
   category: PRODUCT_CATEGORY
   products: TData[]
 }
+
+export type SortDirection = "asc" | "desc"

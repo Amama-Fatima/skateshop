@@ -38,7 +38,7 @@ import {
 } from "~/components/ui/select"
 import { cn } from "~/lib/utils"
 
-import { DebouncedInput } from "./ui/debounced"
+import { DebounceInput } from "./debounced-input"
 
 interface ReactTableProps<TData, TValue = unknown> {
   tableTitle?: string
@@ -455,7 +455,7 @@ function Filter<TData, TValue = unknown>({
   )
 
   return typeof firstValue === "number" ? (
-    <DebouncedInput
+    <DebounceInput
       type="number"
       min={Number(column.getFacetedMinMaxValues()?.[0] ?? "")}
       max={Number(column.getFacetedMinMaxValues()?.[1] ?? "")}
@@ -476,7 +476,7 @@ function Filter<TData, TValue = unknown>({
           <option value={value} key={value} />
         ))}
       </datalist>
-      <DebouncedInput
+      <DebounceInput
         type="text"
         value={(columnFilterValue ?? "") as string}
         onChange={(value) => column.setFilterValue(value)}

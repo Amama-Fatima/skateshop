@@ -1,5 +1,6 @@
 "use server"
 
+import { revalidateTag } from "next/cache"
 import { PRODUCT_CATEGORY } from "@prisma/client"
 import { prisma } from "~/lib/db"
 import { addProductSchema } from "~/lib/validations/product"
@@ -96,3 +97,17 @@ export const addProductAction = zact(
     },
   })
 })
+
+export async function deleteProductAction(ids: string[]) {
+  if (!Array.isArray(ids)) throw new Error("Ids must be an array")
+
+  await prisma.product.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  revalidateTag("products")
+}
