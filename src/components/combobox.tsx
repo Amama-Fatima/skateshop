@@ -12,23 +12,14 @@ import {
   CommandItem,
   CommandList,
 } from "~/components/ui/command"
-import { CommandDebouncedInput } from "~/components/ui/debounced"
 import { cn, formatEnum } from "~/lib/utils"
-import type { GroupedProduct } from "~/types"
+import type { ProductsByCategory } from "~/types"
 import { CommandEmpty } from "cmdk"
 
+import { DebounceCommandInput } from "./debounced-command-input"
 import { Skeleton } from "./ui/skeleton"
 
-interface ComboboxProps {
-  buttonText?: string
-  placeholder?: string
-  empty?: string
-}
-
-export function Combobox({
-  placeholder = "Search products by name...",
-  empty = "No product found.",
-}: ComboboxProps) {
+export function Combobox() {
   const router = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
   const [query, setQuery] = React.useState("")
@@ -44,7 +35,7 @@ export function Combobox({
         body: JSON.stringify({ query }),
       })
 
-      const data = (await response.json()) as GroupedProduct<
+      const data = (await response.json()) as ProductsByCategory<
         Pick<Product, "id" | "name">
       >[]
       return data
@@ -66,6 +57,12 @@ export function Combobox({
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [])
 
+  React.useEffect(() => {
+    if (!isOpen) {
+      setQuery("")
+    }
+  }, [isOpen])
+
   const handleSelect = React.useCallback((callback: () => unknown) => {
     setIsOpen(false)
     callback()
@@ -75,31 +72,27 @@ export function Combobox({
     <>
       <Button
         variant="outline"
-        className="relative justify-start sm:w-44 lg:w-56"
+        className="relative size-9 justify-start md:h-10 md:w-60 md:px-3 md:py-2"
         onClick={() => setIsOpen(true)}
       >
         <Icons.search className="mr-2 size-4" aria-hidden="true" />
-        <span className="hidden lg:inline-flex">Search products...</span>
-        <span className="inline-flex lg:hidden">Search...</span>
+        <span className="hidden md:inline-flex">Search products...</span>
         <span className="sr-only">Search products</span>
-        <kbd className="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+        <kbd className="pointer-events-none absolute right-1.5 top-2 hidden h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 md:flex">
           <span className="text-xs">Ctrl</span>K
         </kbd>
       </Button>
       <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
-        <CommandDebouncedInput
-          placeholder={placeholder}
+        <DebounceCommandInput
+          placeholder="Search products..."
           value={query}
           onValueChange={setQuery}
         />
         <CommandList>
           <CommandEmpty
-            className={cn(
-              "py-6 text-center text-sm",
-              isFetching ? "hidden" : "block"
-            )}
+            className={cn(isFetching ? "hidden" : "py-6 text-center text-sm")}
           >
-            {empty}
+            No products found.
           </CommandEmpty>
           {isFetching ? (
             <div className="space-y-1 overflow-hidden p-1">
@@ -117,9 +110,7 @@ export function Combobox({
                     <CommandItem
                       key={item.id}
                       onSelect={() =>
-                        handleSelect(() =>
-                          router.push(`/products/${group.category}/${item.id}`)
-                        )
+                        handleSelect(() => router.push(`/products/${item.id}`))
                       }
                     >
                       {item.name}

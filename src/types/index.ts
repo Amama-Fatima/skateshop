@@ -33,7 +33,7 @@ export type UploadThingOuput = {
   url: string
 }
 
-export type GroupedProduct<TData extends object> = {
+export type ProductsByCategory<TData extends object> = {
   category: PRODUCT_CATEGORY
   products: TData[]
 }

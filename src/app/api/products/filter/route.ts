@@ -1,8 +1,7 @@
 import { type NextRequest } from "next/server"
-import { PRODUCT_CATEGORY, type Product } from "@prisma/client"
+import { PRODUCT_CATEGORY } from "@prisma/client"
 import { prisma } from "~/lib/db"
 import { filterProductSchema } from "~/lib/validations/product"
-import { type GroupedProduct } from "~/types"
 import { z } from "zod"
 
 export async function POST(req: NextRequest) {
@@ -26,14 +25,16 @@ export async function POST(req: NextRequest) {
 
     console.log("Your products", products)
 
-    const groupedProducts = Object.values(PRODUCT_CATEGORY).map((category) => ({
-      category,
-      products: products.filter((product) => product.catergory === category),
-    })) satisfies GroupedProduct<Pick<Product, "id" | "name">>[]
+    const productsByCategory = Object.values(PRODUCT_CATEGORY).map(
+      (category) => ({
+        category,
+        products: products.filter((product) => product.catergory === category),
+      })
+    )
 
-    console.log("Your grouped products", groupedProducts)
+    console.log("Your grouped products", productsByCategory)
 
-    return new Response(JSON.stringify(groupedProducts), { status: 200 })
+    return new Response(JSON.stringify(productsByCategory), { status: 200 })
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       console.log("Your error", error)
